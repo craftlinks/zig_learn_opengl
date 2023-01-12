@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const Options = @import("../../build.zig").Options;
+const Options = @import("../../../build.zig").Options;
 
 
 inline fn thisDir() []const u8 {

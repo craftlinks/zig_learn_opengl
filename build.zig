@@ -1,4 +1,5 @@
 const std = @import("std");
+const glfw = @import("libs/mach-glfw/build.zig");
 
 
 pub const Options = struct {
@@ -7,10 +8,15 @@ pub const Options = struct {
 };
 
 
-fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime name: []const u8) void{
+fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime name: []const u8) !void{
     exe.want_lto = false;
     if (exe.build_mode == .ReleaseFast)
         exe.strip = true;
+
+    exe.addPackage(glfw.pkg);
+    exe.addPackagePath("gl", "libs/gl.zig");
+
+    try glfw.link(b, exe, .{});
 
     const install = b.step(name, "Build '" ++ name);
     install.dependOn(&b.addInstallArtifact(exe).step);
@@ -25,16 +31,16 @@ fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime nam
 }
 
 
-pub fn build(b: *std.build.Builder) void {
+pub fn build(b: *std.build.Builder) !void {
 
     const options = Options{
         .build_mode = b.standardReleaseOptions(),
         .target = b.standardTargetOptions(.{}),
     };
 
-    const hello_window = @import("getting_started/hello_window/build.zig");
+    const hello_window = @import("src/getting_started/hello_window/build.zig");
 
-    installExe(b, hello_window.build(b, options), "hello_window");
+    try installExe(b, hello_window.build(b, options), "hello_window");
 
 }
 
