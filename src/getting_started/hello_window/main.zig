@@ -14,7 +14,6 @@ fn framebuffer_size_callback(window: glfw.Window, width: u32, height: u32) void 
 
 fn processInput(window: glfw.Window) void {
     if (glfw.Window.getKey(window, glfw.Key.escape) == glfw.Action.press) {
-        // std.debug.print("pressed A\n",.{});
         _ = glfw.Window.setShouldClose(window, true);
     }
 }
@@ -57,21 +56,21 @@ pub fn main() !void {
     // Create an opengl buffer and store the handle (=1)
     gl.genBuffers(1, &VBO);
 
-    // bind the buffer as an ARRAY_BUFFER target
+    // Bind the buffer as an ARRAY_BUFFER target
     gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
 
     // Fill our buffer with the vertex data
     gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
 
-    // create vertex shader
+    // Create vertex shader
     var vertexShader: c_uint = undefined;
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
 
-    // attach the shader source to the vertex shader object and compile it
+    // Attach the shader source to the vertex shader object and compile it
     gl.shaderSource(vertexShader, 1, @ptrCast([*c]const [*c]const u8, &vertexShaderSource), 0);
     gl.compileShader(vertexShader);
 
-    // check if vertex shader was compiled successfully
+    // Check if vertex shader was compiled successfully
     var success: c_int = undefined;
     var infoLog: [512]u8 = [_]u8{0} ** 512;
 
