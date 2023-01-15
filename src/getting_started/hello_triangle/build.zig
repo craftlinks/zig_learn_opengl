@@ -8,7 +8,7 @@ inline fn thisDir() []const u8 {
 }
 
 pub fn build(b: *std.build.Builder, options: Options) *std.build.LibExeObjStep {
-    const exe = b.addExecutable("hello_window", thisDir() ++ "/main.zig");
+    const exe = b.addExecutable("hello_triangle", thisDir() ++ "/main.zig");
 
     exe.setBuildMode(options.build_mode);
     exe.setTarget(options.target);

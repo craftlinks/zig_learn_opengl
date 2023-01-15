@@ -38,9 +38,11 @@ pub fn build(b: *std.build.Builder) !void {
         .target = b.standardTargetOptions(.{}),
     };
 
-    const hello_window = @import("src/getting_started/hello_window/build.zig");
+    const hello_triangle = @import("src/getting_started/hello_triangle/build.zig");
+    const hello_rectangle = @import("src/getting_started/hello_rectangle/build.zig");
 
-    try installExe(b, hello_window.build(b, options), "hello_window");
+    try installExe(b, hello_triangle.build(b, options), "hello_triangle");
+    try installExe(b, hello_rectangle.build(b, options), "hello_rectangle");
 
 }
 
