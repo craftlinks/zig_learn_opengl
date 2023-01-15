@@ -50,7 +50,12 @@ pub fn main() !void {
     // Triangle in normalized device coordinates
     const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
 
-    // The integer handle to our future buffer
+    // The integer handle to our future vertex buffer object (VBO)
+    var VAO: c_uint = undefined;
+    gl.genVertexArrays(1, &VAO);
+    gl.bindVertexArray(VAO);
+
+    // The integer handle to our future vertex buffer object (VBO)
     var VBO: c_uint = undefined;
 
     // Create an opengl buffer and store the handle (=1)
@@ -82,7 +87,44 @@ pub fn main() !void {
     }
 
     // Fragment shader
-    // TODO...
+    var fragmentShader: c_uint = undefined;
+    fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &fragmentShaderSource), 0);
+    gl.compileShader(fragmentShader);
+
+    gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
+
+    if (success == 0) {
+        gl.getShaderInfoLog(fragmentShader, 512, 0, &infoLog);
+        std.log.err("{s}", .{infoLog});
+    }
+
+    // create a program object
+    var shaderProgram: c_uint = undefined;
+    shaderProgram = gl.createProgram();
+
+    // attach compiled shader objects to the program object and link
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    // check if shader linking was successfull
+    gl.getProgramiv(shaderProgram, gl.LINK_STATUS, &success);
+    if (success == 0) {
+        gl.getProgramInfoLog(shaderProgram, 512, 0, &infoLog);
+        std.log.err("{s}", .{infoLog});
+    }
+    // Activate shaderProgram
+    gl.useProgram(shaderProgram);
+
+    // delete our shader objects
+    gl.deleteShader(vertexShader);
+    gl.deleteShader(fragmentShader);
+
+    // Specify and link our vertext attribute description
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
+    gl.enableVertexAttribArray(0);
 
     while (!window.shouldClose()) {
         processInput(window);
@@ -92,6 +134,7 @@ pub fn main() !void {
 
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 }
 
@@ -101,5 +144,13 @@ const vertexShaderSource =
     \\ void main()
     \\ {
     \\   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    \\ }
+;
+
+const fragmentShaderSource =
+    \\ #version 410 core
+    \\ out vec4 FragColor;
+    \\ void main() {
+    \\  FragColor = vec4(1.0, 0.5, 0.2, 1.0);   
     \\ }
 ;
