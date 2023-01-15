@@ -24,6 +24,7 @@ const WindowSize = struct {
     pub const height: u32 = 600;
 };
 
+
 pub fn main() !void {
 
     // glfw: initialize and configure
