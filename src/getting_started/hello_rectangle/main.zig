@@ -19,14 +19,19 @@ const fragmentShaderSource =
     \\ }
 ;
 
+
+
 const WindowSize = struct {
     pub const width: u32 = 800;
     pub const height: u32 = 600;
 };
 
 
-pub fn main() !void {
 
+
+
+pub fn main() !void {
+    
     // glfw: initialize and configure
     // ------------------------------
     if (!glfw.init(.{})) {
@@ -34,7 +39,7 @@ pub fn main() !void {
         return;
     }
     defer glfw.terminate();
-
+    
     // glfw window creation
     // --------------------
     const window = glfw.Window.create(WindowSize.width, WindowSize.height, "mach-glfw + zig-opengl", null, null, .{
@@ -84,7 +89,7 @@ pub fn main() !void {
     gl.compileShader(fragmentShader);
 
     gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
-
+    
     if (success == 0) {
         gl.getShaderInfoLog(fragmentShader, 512, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
@@ -140,8 +145,8 @@ pub fn main() !void {
         processInput(window);
 
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        
+        gl.clear(gl.COLOR_BUFFER_BIT); 
+
         // Activate shaderProgram
         gl.useProgram(shaderProgram);
         gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
