@@ -1,5 +1,3 @@
-//test
-
 const std = @import("std");
 const glfw = @import("glfw");
 const gl = @import("gl");
