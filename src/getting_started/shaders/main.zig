@@ -36,6 +36,11 @@ pub fn main() !void {
     const proc: glfw.GLProc = undefined;
     try gl.load(proc, glGetProcAddress);
 
+    // Determine number of availabe vertex attributes
+    var nrAttributes: c_int = undefined;
+    gl.getIntegerv(gl.MAX_VERTEX_ATTRIBS, @ptrCast([*c]c_int, &nrAttributes));
+    std.debug.print("Maximum nr of vertex attributes supported: {d}", .{nrAttributes});
+
     while (!window.shouldClose()) {
         processInput(window);
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
