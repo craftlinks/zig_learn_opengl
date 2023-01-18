@@ -40,9 +40,11 @@ pub fn build(b: *std.build.Builder) !void {
 
     const hello_triangle = @import("src/getting_started/hello_triangle/build.zig");
     const hello_rectangle = @import("src/getting_started/hello_rectangle/build.zig");
+    const shaders = @import("src/getting_started/shaders/build.zig");
 
     try installExe(b, hello_triangle.build(b, options), "hello_triangle");
     try installExe(b, hello_rectangle.build(b, options), "hello_rectangle");
+    try installExe(b, shaders.build(b, options), "shaders");
 
 }
 
