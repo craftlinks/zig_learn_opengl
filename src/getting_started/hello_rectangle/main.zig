@@ -19,19 +19,13 @@ const fragmentShaderSource =
     \\ }
 ;
 
-
-
 const WindowSize = struct {
     pub const width: u32 = 800;
     pub const height: u32 = 600;
 };
 
-
-
-
-
 pub fn main() !void {
-    
+
     // glfw: initialize and configure
     // ------------------------------
     if (!glfw.init(.{})) {
@@ -39,7 +33,7 @@ pub fn main() !void {
         return;
     }
     defer glfw.terminate();
-    
+
     // glfw window creation
     // --------------------
     const window = glfw.Window.create(WindowSize.width, WindowSize.height, "mach-glfw + zig-opengl", null, null, .{
@@ -89,7 +83,7 @@ pub fn main() !void {
     gl.compileShader(fragmentShader);
 
     gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
-    
+
     if (success == 0) {
         gl.getShaderInfoLog(fragmentShader, 512, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
@@ -114,9 +108,23 @@ pub fn main() !void {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
+    // const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
+    const vertices = [12]f32{
+        0.5, 0.5, 0.0, // top right
+        0.5, -0.5, 0.0, // bottom right
+        -0.5, -0.5, 0.0, // bottom left
+        -0.5, 0.5,  0.0, // top left
+    };
+
+    const indices = [6]c_uint{
+        // note that we start from 0!
+        0, 1, 3, // first triangle
+        1, 2, 3, // second triangle
+    };
+
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
+    var EBO: c_uint = undefined;
 
     gl.genVertexArrays(1, &VAO);
     defer gl.deleteVertexArrays(1, &VAO);
@@ -124,11 +132,17 @@ pub fn main() !void {
     gl.genBuffers(1, &VBO);
     defer gl.deleteBuffers(1, &VBO);
 
+    gl.genBuffers(1, &EBO);
+    defer gl.deleteBuffers(1, &EBO);
+
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     gl.bindVertexArray(VAO);
     gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
     // Fill our buffer with the vertex data
     gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
+    // copy our index array in an element buffer for OpenGL to use
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, EBO);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 6 * @sizeOf(c_uint), &indices, gl.STATIC_DRAW);
 
     // Specify and link our vertext attribute description
     gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
@@ -141,16 +155,23 @@ pub fn main() !void {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     gl.bindVertexArray(0);
 
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, 0);
+
+    // Wireframe mode
+    gl.polygonMode(gl.FRONT_AND_BACK, gl.LINE);
+
     while (!window.shouldClose()) {
         processInput(window);
 
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT); 
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
         // Activate shaderProgram
         gl.useProgram(shaderProgram);
         gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, EBO);
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, null);
+        gl.bindVertexArray(0);
 
         window.swapBuffers();
         glfw.pollEvents();
