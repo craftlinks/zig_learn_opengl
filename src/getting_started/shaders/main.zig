@@ -2,13 +2,32 @@ const std = @import("std");
 const glfw = @import("glfw");
 const gl = @import("gl");
 
+const vertexShaderSource =
+    \\ #version 410 core
+    \\ layout (location = 0) in vec3 aPos;
+    \\ void main()
+    \\ {
+    \\   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    \\ }
+;
+
+const fragmentShaderSource =
+    \\ #version 410 core
+    \\ out vec4 FragColor;
+    \\ uniform vec4 ourColor; // we set this variable in the OpenGL code.
+    \\ void main() {
+    \\  FragColor = ourColor;   
+    \\ }
+;
+
 const WindowSize = struct {
     pub const width: u32 = 800;
     pub const height: u32 = 600;
 };
 
 pub fn main() !void {
-// glfw: initialize and configure
+
+    // glfw: initialize and configure
     // ------------------------------
     if (!glfw.init(.{})) {
         std.log.err("GLFW initialization failed", .{});
@@ -36,19 +55,107 @@ pub fn main() !void {
     const proc: glfw.GLProc = undefined;
     try gl.load(proc, glGetProcAddress);
 
-    // Determine number of availabe vertex attributes
-    var nrAttributes: c_int = undefined;
-    gl.getIntegerv(gl.MAX_VERTEX_ATTRIBS, @ptrCast([*c]c_int, &nrAttributes));
-    std.debug.print("Maximum nr of vertex attributes supported: {d}", .{nrAttributes});
+    // Create vertex shader
+    var vertexShader: c_uint = undefined;
+    vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    defer gl.deleteShader(vertexShader);
+
+    // Attach the shader source to the vertex shader object and compile it
+    gl.shaderSource(vertexShader, 1, @ptrCast([*c]const [*c]const u8, &vertexShaderSource), 0);
+    gl.compileShader(vertexShader);
+
+    // Check if vertex shader was compiled successfully
+    var success: c_int = undefined;
+    var infoLog: [512]u8 = [_]u8{0} ** 512;
+
+    gl.getShaderiv(vertexShader, gl.COMPILE_STATUS, &success);
+
+    if (success == 0) {
+        gl.getShaderInfoLog(vertexShader, 512, 0, &infoLog);
+        std.log.err("{s}", .{infoLog});
+    }
+
+    // Fragment shader
+    var fragmentShader: c_uint = undefined;
+    fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    defer gl.deleteShader(fragmentShader);
+
+    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &fragmentShaderSource), 0);
+    gl.compileShader(fragmentShader);
+
+    gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
+
+    if (success == 0) {
+        gl.getShaderInfoLog(fragmentShader, 512, 0, &infoLog);
+        std.log.err("{s}", .{infoLog});
+    }
+
+    // create a program object
+    var shaderProgram: c_uint = undefined;
+    shaderProgram = gl.createProgram();
+    defer gl.deleteProgram(shaderProgram);
+
+    // attach compiled shader objects to the program object and link
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    // check if shader linking was successfull
+    gl.getProgramiv(shaderProgram, gl.LINK_STATUS, &success);
+    if (success == 0) {
+        gl.getProgramInfoLog(shaderProgram, 512, 0, &infoLog);
+        std.log.err("{s}", .{infoLog});
+    }
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
+    var VBO: c_uint = undefined;
+    var VAO: c_uint = undefined;
+
+    gl.genVertexArrays(1, &VAO);
+    defer gl.deleteVertexArrays(1, &VAO);
+
+    gl.genBuffers(1, &VBO);
+    defer gl.deleteBuffers(1, &VBO);
+
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    gl.bindVertexArray(VAO);
+    gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
+    // Fill our buffer with the vertex data
+    gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
+
+    // Specify and link our vertext attribute description
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
+    gl.enableVertexAttribArray(0);
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    gl.bindBuffer(gl.ARRAY_BUFFER, 0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    gl.bindVertexArray(0);
 
     while (!window.shouldClose()) {
         processInput(window);
+
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.useProgram(shaderProgram); // Required for updating the uniform value
+
+        // 
+        var timeValue = glfw.getTime();
+        var greenValue: f32 = (@floatCast(f32,@sin(timeValue)) / 2.0) + 0.5;
+        var vertexColorLocation = gl.getUniformLocation(shaderProgram, "ourColor");
+        gl.uniform4f(vertexColorLocation, 1.0, greenValue, (greenValue*-1.0) + 1.0, 1.0);
+        
+        gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
         window.swapBuffers();
         glfw.pollEvents();
     }
-
 }
 
 fn glGetProcAddress(p: glfw.GLProc, proc: [:0]const u8) ?gl.FunctionPointer {
