@@ -11,19 +11,11 @@ const vertexShaderSource =
     \\ }
 ;
 
-const fragmentShaderSource_1 =
+const fragmentShaderSource =
     \\ #version 410 core
     \\ out vec4 FragColor;
     \\ void main() {
     \\  FragColor = vec4(1.0, 0.5, 0.2, 1.0);   
-    \\ }
-;
-
-const fragmentShaderSource_2 =
-    \\ #version 410 core
-    \\ out vec4 FragColor;
-    \\ void main() {
-    \\  FragColor = vec4(1.0, 1.0, 0.2, 1.0);   
     \\ }
 ;
 
@@ -83,104 +75,55 @@ pub fn main() !void {
     }
 
     // Fragment shader
-    var fragmentShader_1: c_uint = undefined;
-    fragmentShader_1 = gl.createShader(gl.FRAGMENT_SHADER);
-    defer gl.deleteShader(fragmentShader_1);
+    var fragmentShader: c_uint = undefined;
+    fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    defer gl.deleteShader(fragmentShader);
 
-    gl.shaderSource(fragmentShader_1, 1, @ptrCast([*c]const [*c]const u8, &fragmentShaderSource_1), 0);
-    gl.compileShader(fragmentShader_1);
+    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &fragmentShaderSource), 0);
+    gl.compileShader(fragmentShader);
 
-    gl.getShaderiv(fragmentShader_1, gl.COMPILE_STATUS, &success);
-
-    if (success == 0) {
-        gl.getShaderInfoLog(fragmentShader_1, 512, 0, &infoLog);
-        std.log.err("{s}", .{infoLog});
-    }
-
-    // Fragment shader
-    var fragmentShader_2: c_uint = undefined;
-    fragmentShader_2 = gl.createShader(gl.FRAGMENT_SHADER);
-    defer gl.deleteShader(fragmentShader_2);
-
-    gl.shaderSource(fragmentShader_2, 1, @ptrCast([*c]const [*c]const u8, &fragmentShaderSource_2), 0);
-    gl.compileShader(fragmentShader_2);
-
-    gl.getShaderiv(fragmentShader_2, gl.COMPILE_STATUS, &success);
+    gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
 
     if (success == 0) {
-        gl.getShaderInfoLog(fragmentShader_2, 512, 0, &infoLog);
+        gl.getShaderInfoLog(fragmentShader, 512, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
     }
 
     // create a program object
-    var shaderProgram_1: c_uint = undefined;
-    shaderProgram_1 = gl.createProgram();
-    defer gl.deleteProgram(shaderProgram_1);
-
-        // create a program object
-    var shaderProgram_2: c_uint = undefined;
-    shaderProgram_2 = gl.createProgram();
-    defer gl.deleteProgram(shaderProgram_2);
+    var shaderProgram: c_uint = undefined;
+    shaderProgram = gl.createProgram();
+    defer gl.deleteProgram(shaderProgram);
 
     // attach compiled shader objects to the program object and link
-    gl.attachShader(shaderProgram_1, vertexShader);
-    gl.attachShader(shaderProgram_1, fragmentShader_1);
-    gl.linkProgram(shaderProgram_1);
-
-    // attach compiled shader objects to the program object and link
-    gl.attachShader(shaderProgram_2, vertexShader);
-    gl.attachShader(shaderProgram_2, fragmentShader_2);
-    gl.linkProgram(shaderProgram_2);
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
 
     // check if shader linking was successfull
-    gl.getProgramiv(shaderProgram_1, gl.LINK_STATUS, &success);
+    gl.getProgramiv(shaderProgram, gl.LINK_STATUS, &success);
     if (success == 0) {
-        gl.getProgramInfoLog(shaderProgram_1, 512, 0, &infoLog);
-        std.log.err("{s}", .{infoLog});
-    }
-
-    // check if shader linking was successfull
-    gl.getProgramiv(shaderProgram_2, gl.LINK_STATUS, &success);
-    if (success == 0) {
-        gl.getProgramInfoLog(shaderProgram_2, 512, 0, &infoLog);
+        gl.getProgramInfoLog(shaderProgram, 512, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
     }
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    const vertices_1 = [9]f32 { 
-        // Triangle 1
-        -1.0, -0.5, 0.0, 0.0, -0.5, 0.0, -0.5, 0.5, 0.0,
-    };
-    
-    const vertices_2 = [9]f32 {
-        // Triangle 2 
-         0.0, -0.5, 0.0, 1.0, -0.5, 0.0, 0.5, 0.5, 0.0
-    };   
+    const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
+    var VBO: c_uint = undefined;
+    var VAO: c_uint = undefined;
 
-    var VBOs: [2]c_uint = undefined;
-    var VAOs: [2]c_uint = undefined;
+    gl.genVertexArrays(1, &VAO);
+    defer gl.deleteVertexArrays(1, &VAO);
 
-    gl.genVertexArrays(2, &VAOs);
-    defer gl.deleteVertexArrays(2, &VAOs);
+    gl.genBuffers(1, &VBO);
+    defer gl.deleteBuffers(1, &VBO);
 
-    gl.genBuffers(2, &VBOs);
-    defer gl.deleteBuffers(1, &VBOs);
-
-    // bind the Vertex Array Object for trangle 1 first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    gl.bindVertexArray(VAOs[0]);
-    gl.bindBuffer(gl.ARRAY_BUFFER, VBOs[0]);
-    // Fill our buffer with the vertex data for traingle 1
-    gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices_1.len, &vertices_1, gl.STATIC_DRAW);
-    // Specify and link our vertext attribute description
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
-    gl.enableVertexAttribArray(0);
-    
-    // bind the Vertex Array Object for triangle 2 first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    gl.bindVertexArray(VAOs[1]);
-    gl.bindBuffer(gl.ARRAY_BUFFER, VBOs[1]);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    gl.bindVertexArray(VAO);
+    gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
     // Fill our buffer with the vertex data
-    gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices_2.len, &vertices_2, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
+
     // Specify and link our vertext attribute description
     gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
@@ -199,15 +142,8 @@ pub fn main() !void {
         gl.clear(gl.COLOR_BUFFER_BIT);
         
         // Activate shaderProgram
-        gl.useProgram(shaderProgram_1);
-        // Draw triangle 1
-        gl.bindVertexArray(VAOs[0]); 
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-        
-        // Activate shaderProgram
-        gl.useProgram(shaderProgram_2);
-        // Draw triangle 2
-        gl.bindVertexArray(VAOs[1]);
+        gl.useProgram(shaderProgram);
+        gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         gl.drawArrays(gl.TRIANGLES, 0, 3);
 
         window.swapBuffers();
