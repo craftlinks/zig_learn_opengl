@@ -23,5 +23,5 @@ Sample programs can be used together with the reference book: [Learn OpenGL - Gr
     [Shader](src/common/shader.zig) struct mirrors the C++ Shader Class in the book. 
 
     - WIP: 
-        - at the moment I have still a bug in the gl.VertexAttribPointer that needs to be fixed.
-        - implementing a utility 'Shader' struct to mirror the 'Shader' class in the book.
+        - at the moment I have still a bug in the gl.VertexAttribPointer that needs to be fixed. Help appreciated.
+        - Implementing a utility 'Shader' struct to mirror the 'Shader' class in the book.
