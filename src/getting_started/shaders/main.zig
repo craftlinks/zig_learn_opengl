@@ -5,18 +5,21 @@ const gl = @import("gl");
 const vertexShaderSource =
     \\ #version 410 core
     \\ layout (location = 0) in vec3 aPos;
+    \\ layout (location = 1) in vec3 aColor;
+    \\ out vec3 ourColor; // output color to the fragment shader
     \\ void main()
     \\ {
-    \\   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    \\   gl_Position = vec4(aPos, 1.0);
+    \\   ourColor = aColor;
     \\ }
 ;
 
 const fragmentShaderSource =
     \\ #version 410 core
     \\ out vec4 FragColor;
-    \\ uniform vec4 ourColor; // we set this variable in the OpenGL code.
+    \\ in vec3 ourColor;
     \\ void main() {
-    \\  FragColor = ourColor;   
+    \\  FragColor = vec4(ourColor, 1.0);   
     \\ }
 ;
 
@@ -109,7 +112,12 @@ pub fn main() !void {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
+    const vertices = [_]f32{ 
+        // Positions     // Colors
+        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 
+         0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
+         0.0,  0.5, 0.0, 0.0, 0.0, 1.0,
+    };
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
 
@@ -126,29 +134,20 @@ pub fn main() !void {
     gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
 
     // Specify and link our vertext attribute description
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
 
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    gl.bindBuffer(gl.ARRAY_BUFFER, 0);
+    const offset: c_int = 3 * @sizeOf(f32);
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), &offset);
+    gl.enableVertexAttribArray(1);
 
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    gl.bindVertexArray(0);
+    gl.useProgram(shaderProgram);
 
     while (!window.shouldClose()) {
         processInput(window);
 
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.useProgram(shaderProgram); // Required for updating the uniform value
-
-        // 
-        var timeValue = glfw.getTime();
-        var greenValue: f32 = (@floatCast(f32,@sin(timeValue)) / 2.0) + 0.5;
-        var vertexColorLocation = gl.getUniformLocation(shaderProgram, "ourColor");
-        gl.uniform4f(vertexColorLocation, 1.0, greenValue, (greenValue*-1.0) + 1.0, 1.0);
         
         gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         gl.drawArrays(gl.TRIANGLES, 0, 3);
