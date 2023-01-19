@@ -17,5 +17,9 @@ Sample programs can be used together with the reference book: [Learn OpenGL - Gr
 <br /><a href="src/getting_started/hello_rectangle"><img src="src/getting_started/hello_rectangle/image.png" alt="hello triangle" height="200"></a>
 
 ### Shaders
+- [**shaders**](getting_started/shaders/): Little programs that rest on the GPU <br />
+`zig build shaders-run`
 
-- WIP
+    - WIP: 
+        - at the moment I have still a bug in the gl.VertexAttribPointer that needs to be fixed.
+        - implementing a utility 'Shader' struct to mirror the 'Shader' class in the book.

@@ -1,6 +1,7 @@
 const std = @import("std");
 const glfw = @import("glfw");
 const gl = @import("gl");
+const shader = @import("shader");
 
 const vertexShaderSource =
     \\ #version 410 core
@@ -29,6 +30,7 @@ const WindowSize = struct {
 };
 
 pub fn main() !void {
+    std.log.info("{s}", .{shader.haha});
 
     // glfw: initialize and configure
     // ------------------------------
@@ -137,8 +139,9 @@ pub fn main() !void {
     gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
 
-    const offset: c_int = 3 * @sizeOf(f32);
-    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), &offset);
+    const offset: c_uint = 3 * @sizeOf(f32);
+    const offset_ptr = &offset;
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), offset_ptr);
     gl.enableVertexAttribArray(1);
 
     gl.useProgram(shaderProgram);
