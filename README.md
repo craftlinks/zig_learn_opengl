@@ -11,13 +11,13 @@ Sample programs can be used together with the reference book: [Learn OpenGL - Gr
 ## Getting Started
 ### Hello Triangle 
 
-- [**hello_triangle**](getting_started/hello_triangle/): Minimal setup for drawing a trianlge on screen.<br />`zig build hello_triangle-run`
+- [**hello_triangle**](src/getting_started/hello_triangle/): Minimal setup for drawing a trianlge on screen.<br />`zig build hello_triangle-run`
 <br /><a href="src/getting_started/hello_triangle"><img src="src/getting_started/hello_triangle/image.png" alt="hello triangle" height="200"></a>
 - [**hello_rectangle**](src/getting_started/hello_rectangle/): Draw a rectangle efficiently with indexed rendering using the **'Element Buffer Object'**. <br />`zig build hello_rectangle-run`
 <br /><a href="src/getting_started/hello_rectangle"><img src="src/getting_started/hello_rectangle/image.png" alt="hello triangle" height="200"></a>
 
 ### Shaders
-- [**shaders**](getting_started/shaders/): Little programs that rest on the GPU <br />
+- [**shaders**](src/getting_started/shaders/): Little programs that rest on the GPU <br />
 `zig build shaders-run`
 
     - WIP: 
