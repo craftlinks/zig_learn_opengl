@@ -12,6 +12,16 @@ pub fn create(arena: std.mem.Allocator,vertex_path: []const u8, fragment_path: [
     // open files and extract the content as byte stream
     const vs_file = std.fs.openFileAbsolute(vertex_path, .{}) catch unreachable;
     defer vs_file.close();
+    
+    // const contents = try file.reader().readAllAlloc(
+    //    test_allocator,
+    //    message.len,
+    // );
+
+    // also, we should work with a content dir that copies the shader source to the exe install path so that we can call fs.cwd().openfilewith relative path instead of full path
+    defer test_allocator.free(contents);
+    
+    
     const vs_code = vs_file.reader().readAllAlloc(arena, 256 * 1024) catch unreachable;
 
     const fs_file = std.fs.openFileAbsolute(fragment_path, .{}) catch unreachable;
