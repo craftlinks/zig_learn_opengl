@@ -11,6 +11,13 @@ pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
     var vertexShader: c_uint = undefined;
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
     defer gl.deleteShader(vertexShader);
+    var exe_path = [_]u8{0} ** 256; 
+    _ = std.fs.selfExeDirPath(&exe_path) catch unreachable;
+    std.debug.print("{s}", .{&exe_path});
+    const full_path = std.fs.path.join(arena, &.{
+    //             std.fs.selfExeDirPathAlloc(arena) catch unreachable,
+    //             path,
+    //         }) catch unreachable;
 
     // TODO:
     // const full_path = std.fs.path.join(arena, &.{

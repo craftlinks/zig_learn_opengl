@@ -38,6 +38,10 @@ pub fn main() !void {
     const proc: glfw.GLProc = undefined;
     try gl.load(proc, glGetProcAddress);
 
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var allocator = gpa.allocator();
+    _ = allocator;
+
     // create shader program
     var shader_program: Shader = Shader.create("src/getting_started/shaders/shaders/shader.vs", "src/getting_started/shaders/shaders/shader.fs");
 
