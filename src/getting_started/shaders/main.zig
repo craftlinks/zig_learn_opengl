@@ -38,10 +38,9 @@ pub fn main() !void {
     try gl.load(proc, glGetProcAddress);
 
     // create shader program
-    var shader_program: Shader = Shader.create(
-    "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs",
-    "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
-    //"C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs", "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
+    var shader_program: Shader = Shader.create("C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs", "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
+    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs",
+    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -64,16 +63,16 @@ pub fn main() !void {
     // Specify and link our vertext attribute description
     gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
-    const ID = shader_program.use();
-    std.debug.print("{any}", .{ID});
+
     while (!window.shouldClose()) {
         processInput(window);
 
         gl.clearColor(0.2, 0.3, 0.7, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        
+
         _ = shader_program.use();
-        gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+
+        gl.bindVertexArray(VAO);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
 
         window.swapBuffers();

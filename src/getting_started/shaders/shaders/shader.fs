@@ -3,5 +3,4 @@
     void main()
     {
        FragColor = vec4(0.4,0.8,0.3, 0.5);
-       return FragColor
     };

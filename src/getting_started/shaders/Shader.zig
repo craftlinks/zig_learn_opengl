@@ -5,88 +5,67 @@ const Shader = @This();
 // The program ID
 ID: c_uint,
 
-const fragmentShaderSource =
-    \\ #version 330 core
-    \\ out vec4 FragColor;
-    \\ void main() {
-    \\  FragColor = vec4(1.0, 0.6, 0.2, 1.0);
-    \\ }
-;
-
-pub fn create(vertex_path: []const u8, fragment_path: []const u8) Shader {
-
-    // open files and extract the content as byte stream
-    const vs_file = std.fs.openFileAbsolute(vertex_path, .{}) catch unreachable;
-    defer vs_file.close();
-    
-    // also, we should work with a content dir that copies the shader source to the exe install path so that we can call fs.cwd().openfilewith relative path instead of full path
-    var vs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
-    _ = vs_file.readAll(&vs_code) catch unreachable;
-    //defer allocator.free(vs_code);
-
-    const fs_file = std.fs.openFileAbsolute(fragment_path, .{}) catch unreachable;
-    defer fs_file.close();
-    var fs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024); 
-    _ = fs_file.readAll(&fs_code) catch unreachable;
-
-
-    var success: c_int = undefined;
-    var infoLog: [1024]u8 = [_]u8{0} ** 1024;
+pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
 
     // Create vertex shader
-    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    var vertexShader: c_uint = undefined;
+    vertexShader = gl.createShader(gl.VERTEX_SHADER);
     defer gl.deleteShader(vertexShader);
 
-    var vs_code_c = @ptrCast([*c]const [*c]const u8, &&vs_code);
-    std.debug.print("VERTEX SHADER: \n{s}\n", .{ vs_code_c.*});
+    const vs_file = std.fs.openFileAbsolute(vertex_path, .{}) catch unreachable;
+    var vs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
+    _ = vs_file.readAll(&vs_code) catch unreachable;
 
-    var fs_code_c = @ptrCast([*c]const [*c]const u8, &fragmentShaderSource);
-    std.debug.print("FRAGMENT SHADER: \n{s}\n", .{ fs_code_c.*});
-
+    const fs_file = std.fs.openFileAbsolute(fragment_path, .{}) catch unreachable;
+    var fs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
+    _ = fs_file.readAll(&fs_code) catch unreachable;
 
     // Attach the shader source to the vertex shader object and compile it
-    gl.shaderSource(vertexShader, 1,vs_code_c, null);
+    gl.shaderSource(vertexShader, 1, @ptrCast([*c]const [*c]const u8, &&vs_code), 0);
     gl.compileShader(vertexShader);
+
+    // Check if vertex shader was compiled successfully
+    var success: c_int = undefined;
+    var infoLog: [512]u8 = [_]u8{0} ** 512;
 
     gl.getShaderiv(vertexShader, gl.COMPILE_STATUS, &success);
 
     if (success == 0) {
-        gl.getShaderInfoLog(vertexShader, 1024, 0, &infoLog);
+        gl.getShaderInfoLog(vertexShader, 512, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
     }
 
     // Fragment shader
-    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    var fragmentShader: c_uint = undefined;
+    fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     defer gl.deleteShader(fragmentShader);
 
-    gl.shaderSource(fragmentShader, 1, fs_code_c, null);
+    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &&fs_code), 0);
     gl.compileShader(fragmentShader);
 
     gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
 
     if (success == 0) {
-        gl.getShaderInfoLog(fragmentShader, 1024, 0, &infoLog);
+        gl.getShaderInfoLog(fragmentShader, 512, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
     }
 
     // create a program object
-    const ID = gl.createProgram();
-    // std.debug.print("{any}", .{ID});
-    defer gl.deleteProgram(ID);
+    const shaderProgram = gl.createProgram();
+    std.debug.print("{any}", .{shaderProgram});
 
     // attach compiled shader objects to the program object and link
-    gl.attachShader(ID, vertexShader);
-    gl.attachShader(ID, fragmentShader);
-    gl.linkProgram(ID);
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
 
     // check if shader linking was successfull
-    gl.getProgramiv(ID, gl.LINK_STATUS, &success);
+    gl.getProgramiv(shaderProgram, gl.LINK_STATUS, &success);
     if (success == 0) {
-        gl.getProgramInfoLog(ID, 512, 0, &infoLog);
+        gl.getProgramInfoLog(shaderProgram, 512, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
     }
-
-    return Shader{.ID = ID};
+    return Shader{.ID = shaderProgram};
 }
 
 pub fn use(self: Shader) c_uint {
