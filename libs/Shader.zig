@@ -11,32 +11,24 @@ pub fn create(arena: std.mem.Allocator, vs_path:[]const u8, fs_path:[]const u8) 
     var vertexShader: c_uint = undefined;
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
     defer gl.deleteShader(vertexShader);
-    var exe_path = [_]u8{0} ** 256; 
-    _ = std.fs.selfExeDirPath(&exe_path) catch unreachable;
     const full_vs_path = std.fs.path.join(arena, &.{
                 std.fs.selfExeDirPathAlloc(arena) catch unreachable,
                 vs_path,
             }) catch unreachable;
-
-    std.debug.print("{s}\n", .{full_vs_path});
 
     const full_fs_path = std.fs.path.join(arena, &.{
                 std.fs.selfExeDirPathAlloc(arena) catch unreachable,
                 fs_path,
             }) catch unreachable;
 
-    std.debug.print("{s}\n", .{full_fs_path});
-
     const vs_file = std.fs.openFileAbsolute(full_vs_path, .{}) catch unreachable;
-    var vs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
-    _ = vs_file.readAll(&vs_code) catch unreachable;
+    const vs_code = vs_file.readToEndAllocOptions(arena, (10 * 1024), null, @alignOf(u8), 0) catch unreachable;
 
     const fs_file = std.fs.openFileAbsolute(full_fs_path, .{}) catch unreachable;
-    var fs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
-    _ = fs_file.readAll(&fs_code) catch unreachable;
+    const fs_code = fs_file.readToEndAllocOptions(arena, (10 * 1024), null, @alignOf(u8), 0) catch unreachable;
 
     // Attach the shader source to the vertex shader object and compile it
-    gl.shaderSource(vertexShader, 1, @ptrCast([*c]const [*c]const u8, &&vs_code), 0);
+    gl.shaderSource(vertexShader, 1, @ptrCast([*c]const [*c]const u8, &vs_code), 0);
     gl.compileShader(vertexShader);
 
     // Check if vertex shader was compiled successfully
@@ -55,7 +47,7 @@ pub fn create(arena: std.mem.Allocator, vs_path:[]const u8, fs_path:[]const u8) 
     fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     defer gl.deleteShader(fragmentShader);
 
-    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &&fs_code), 0);
+    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &fs_code), 0);
     gl.compileShader(fragmentShader);
 
     gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
