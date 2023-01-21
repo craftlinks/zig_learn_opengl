@@ -40,10 +40,12 @@ pub fn main() !void {
 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     var allocator = gpa.allocator();
-    _ = allocator;
+    var arena_allocator_state = std.heap.ArenaAllocator.init(allocator);
+    defer arena_allocator_state.deinit();
+    const arena_allocator = arena_allocator_state.allocator();
 
     // create shader program
-    var shader_program: Shader = Shader.create("src/getting_started/shaders/shaders/shader.vs", "src/getting_started/shaders/shaders/shader.fs");
+    var shader_program: Shader = Shader.create(arena_allocator, "shaders\\shader.vs", "shaders\\shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------

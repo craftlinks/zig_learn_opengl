@@ -5,7 +5,7 @@ const Shader = @This();
 // The program ID
 ID: c_uint,
 
-pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
+pub fn create(arena: std.mem.Allocator, vs_path:[]const u8, fs_path:[]const u8) Shader {
 
     // Create vertex shader
     var vertexShader: c_uint = undefined;
@@ -13,26 +13,25 @@ pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
     defer gl.deleteShader(vertexShader);
     var exe_path = [_]u8{0} ** 256; 
     _ = std.fs.selfExeDirPath(&exe_path) catch unreachable;
-    std.debug.print("{s}", .{&exe_path});
-    const full_path = std.fs.path.join(arena, &.{
-    //             std.fs.selfExeDirPathAlloc(arena) catch unreachable,
-    //             path,
-    //         }) catch unreachable;
+    const full_vs_path = std.fs.path.join(arena, &.{
+                std.fs.selfExeDirPathAlloc(arena) catch unreachable,
+                vs_path,
+            }) catch unreachable;
 
-    // TODO:
-    // const full_path = std.fs.path.join(arena, &.{
-    //             std.fs.selfExeDirPathAlloc(arena) catch unreachable,
-    //             path,
-    //         }) catch unreachable;
-    //         const vs_file = std.fs.openFileAbsolute(full_path, .{}) catch unreachable;
-    //         defer vs_file.close();
+    std.debug.print("{s}\n", .{full_vs_path});
 
+    const full_fs_path = std.fs.path.join(arena, &.{
+                std.fs.selfExeDirPathAlloc(arena) catch unreachable,
+                fs_path,
+            }) catch unreachable;
 
-    const vs_file = std.fs.cwd().openFile(vertex_path, .{}) catch unreachable;
+    std.debug.print("{s}\n", .{full_fs_path});
+
+    const vs_file = std.fs.openFileAbsolute(full_vs_path, .{}) catch unreachable;
     var vs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
     _ = vs_file.readAll(&vs_code) catch unreachable;
 
-    const fs_file = std.fs.cwd().openFile(fragment_path, .{}) catch unreachable;
+    const fs_file = std.fs.openFileAbsolute(full_fs_path, .{}) catch unreachable;
     var fs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
     _ = fs_file.readAll(&fs_code) catch unreachable;
 
