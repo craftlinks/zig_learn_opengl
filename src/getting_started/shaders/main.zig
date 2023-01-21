@@ -2,6 +2,7 @@ const std = @import("std");
 const glfw = @import("glfw");
 const gl = @import("gl");
 const Shader = @import("Shader");
+
 const WindowSize = struct {
     pub const width: u32 = 800;
     pub const height: u32 = 600;

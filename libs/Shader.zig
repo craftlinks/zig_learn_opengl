@@ -12,6 +12,15 @@ pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
     defer gl.deleteShader(vertexShader);
 
+    // TODO:
+    // const full_path = std.fs.path.join(arena, &.{
+    //             std.fs.selfExeDirPathAlloc(arena) catch unreachable,
+    //             path,
+    //         }) catch unreachable;
+    //         const vs_file = std.fs.openFileAbsolute(full_path, .{}) catch unreachable;
+    //         defer vs_file.close();
+
+
     const vs_file = std.fs.cwd().openFile(vertex_path, .{}) catch unreachable;
     var vs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
     _ = vs_file.readAll(&vs_code) catch unreachable;
