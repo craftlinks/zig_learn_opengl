@@ -5,44 +5,37 @@ const Shader = @This();
 // The program ID
 ID: c_uint,
 
-pub const haha = "This is a test";
-
-pub fn create(arena: std.mem.Allocator,vertex_path: []const u8, fragment_path: []const u8) Shader {
+pub fn create(allocator: std.mem.Allocator,vertex_path: []const u8, fragment_path: []const u8) Shader {
     
     // open files and extract the content as byte stream
     const vs_file = std.fs.openFileAbsolute(vertex_path, .{}) catch unreachable;
     defer vs_file.close();
     
-    // const contents = try file.reader().readAllAlloc(
-    //    test_allocator,
-    //    message.len,
-    // );
-
     // also, we should work with a content dir that copies the shader source to the exe install path so that we can call fs.cwd().openfilewith relative path instead of full path
-    defer test_allocator.free(contents);
     
-    
-    const vs_code = vs_file.reader().readAllAlloc(arena, 256 * 1024) catch unreachable;
+    const vs_code = vs_file.readToEndAlloc(allocator, 10 * 1024) catch unreachable;
+    defer allocator.free(vs_code);
 
     const fs_file = std.fs.openFileAbsolute(fragment_path, .{}) catch unreachable;
-    defer fs_file.close();
-    const fs_code = fs_file.reader().readAllAlloc(arena, 258 * 1024) catch unreachable;
+    // defer fs_file.close();
+    const fs_code = fs_file.readToEndAlloc(allocator, 10 * 1024) catch unreachable;
+    // defer allocator.free(fs_code);
 
     var success: c_int = undefined;
-    var infoLog: [512]u8 = [_]u8{0} ** 512;
+    var infoLog: [1024]u8 = [_]u8{0} ** 1024;
 
     // Create vertex shader
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     defer gl.deleteShader(vertexShader);
 
     // Attach the shader source to the vertex shader object and compile it
-    gl.shaderSource(vertexShader, 1, @ptrCast([*c]const [*c]const u8, &vs_code.ptr), null);
+    gl.shaderSource(vertexShader, 1, @ptrCast([*c]const [*c]const u8, &&vs_code), null);
     gl.compileShader(vertexShader);
 
     gl.getShaderiv(vertexShader, gl.COMPILE_STATUS, &success);
 
     if (success == 0) {
-        gl.getShaderInfoLog(vertexShader, 512, 0, &infoLog);
+        gl.getShaderInfoLog(vertexShader, 1024, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
     }
 
@@ -50,13 +43,13 @@ pub fn create(arena: std.mem.Allocator,vertex_path: []const u8, fragment_path: [
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     defer gl.deleteShader(fragmentShader);
 
-    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &fs_code.ptr), null);
+    gl.shaderSource(fragmentShader, 1, @ptrCast([*c]const [*c]const u8, &&fs_code), null);
     gl.compileShader(fragmentShader);
 
     gl.getShaderiv(fragmentShader, gl.COMPILE_STATUS, &success);
 
     if (success == 0) {
-        gl.getShaderInfoLog(fragmentShader, 512, 0, &infoLog);
+        gl.getShaderInfoLog(fragmentShader, 1024, 0, &infoLog);
         std.log.err("{s}", .{infoLog});
     }
 

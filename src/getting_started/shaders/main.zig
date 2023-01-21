@@ -8,7 +8,6 @@ const WindowSize = struct {
 };
 
 pub fn main() !void {
-    std.log.info("{s}", .{Shader.haha});
 
     // glfw: initialize and configure
     // ------------------------------
@@ -40,22 +39,24 @@ pub fn main() !void {
 
     // memory management
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
+    // defer _ = gpa.deinit();
     const allocator = gpa.allocator();
-    var arena_allocator_state = std.heap.ArenaAllocator.init(allocator);
-    defer arena_allocator_state.deinit();
-    const arena_allocator = arena_allocator_state.allocator();
+
+    // const allocator = std.heap.c_allocator;
 
     // create shader program
-    var shader_program: Shader = Shader.create(arena_allocator, "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs", "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
+    var shader_program: Shader = Shader.create(allocator,
+    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs",
+    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs"
+    "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs", "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    const vertices = [_]f32{ 
+    const vertices = [_]f32{
         // Positions     // Colors
-        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 
-         0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
-         0.0,  0.5, 0.0, 0.0, 0.0, 1.0,
+        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+        0.5,  -0.5, 0.0, 0.0, 1.0, 0.0,
+        0.0,  0.5,  0.0, 0.0, 0.0, 1.0,
     };
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
@@ -77,8 +78,7 @@ pub fn main() !void {
     gl.enableVertexAttribArray(0);
 
     const offset: c_uint = 3 * @sizeOf(f32);
-    const offset_ptr = &offset;
-    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), offset_ptr);
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), &offset);
     gl.enableVertexAttribArray(1);
 
     while (!window.shouldClose()) {
