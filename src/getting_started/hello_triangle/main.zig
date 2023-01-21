@@ -15,7 +15,7 @@ const fragmentShaderSource =
     \\ #version 410 core
     \\ out vec4 FragColor;
     \\ void main() {
-    \\  FragColor = vec4(1.0, 0.5, 0.2, 1.0);   
+    \\  FragColor = vec4(1.0, 1.0, 0.2, 1.0);   
     \\ }
 ;
 
@@ -92,6 +92,7 @@ pub fn main() !void {
     // create a program object
     var shaderProgram: c_uint = undefined;
     shaderProgram = gl.createProgram();
+    std.debug.print("{any}",.{shaderProgram});
     defer gl.deleteProgram(shaderProgram);
 
     // attach compiled shader objects to the program object and link
@@ -129,11 +130,10 @@ pub fn main() !void {
     gl.enableVertexAttribArray(0);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    gl.bindBuffer(gl.ARRAY_BUFFER, 0);
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    gl.bindVertexArray(0);
+   
 
     while (!window.shouldClose()) {
         processInput(window);

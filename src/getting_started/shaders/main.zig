@@ -37,27 +37,15 @@ pub fn main() !void {
     const proc: glfw.GLProc = undefined;
     try gl.load(proc, glGetProcAddress);
 
-    // memory management
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    // defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
-
-    // const allocator = std.heap.c_allocator;
-
     // create shader program
-    var shader_program: Shader = Shader.create(allocator,
-    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs",
-    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs"
-    "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs", "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
+    var shader_program: Shader = Shader.create(
+    "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs",
+    "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
+    //"C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs", "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    const vertices = [_]f32{
-        // Positions     // Colors
-        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
-        0.5,  -0.5, 0.0, 0.0, 1.0, 0.0,
-        0.0,  0.5,  0.0, 0.0, 0.0, 1.0,
-    };
+    const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
 
@@ -74,19 +62,17 @@ pub fn main() !void {
     gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
 
     // Specify and link our vertext attribute description
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), null);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
-
-    const offset: c_uint = 3 * @sizeOf(f32);
-    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), &offset);
-    gl.enableVertexAttribArray(1);
-
+    const ID = shader_program.use();
+    std.debug.print("{any}", .{ID});
     while (!window.shouldClose()) {
         processInput(window);
 
-        gl.clearColor(0.2, 0.3, 0.3, 1.0);
+        gl.clearColor(0.2, 0.3, 0.7, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        shader_program.use();
+        
+        _ = shader_program.use();
         gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         gl.drawArrays(gl.TRIANGLES, 0, 3);
 
