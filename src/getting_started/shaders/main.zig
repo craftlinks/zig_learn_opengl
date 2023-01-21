@@ -44,7 +44,11 @@ pub fn main() !void {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    const vertices = [9]f32{ -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.0, 0.5, 0.0 };
+    const vertices = [_]f32{ 
+        -0.5, -0.5, 0.0,    1.0, 0.0, 0.0,
+         0.5, -0.5, 0.0,    0.0, 1.0, 0.0,
+         0.0, 0.5, 0.0,     0.0, 0.0, 1.0,      
+    };
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
 
@@ -61,8 +65,12 @@ pub fn main() !void {
     gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
 
     // Specify and link our vertext attribute description
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * @sizeOf(f32), null);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
+
+    const offset: [*c]c_uint = (3 * @sizeOf(f32));
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), offset);
+    gl.enableVertexAttribArray(1);
 
     while (!window.shouldClose()) {
         processInput(window);
