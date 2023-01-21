@@ -1,7 +1,7 @@
 const std = @import("std");
 const glfw = @import("glfw");
 const gl = @import("gl");
-const Shader = @import("./Shader.zig");
+const Shader = @import("Shader");
 const WindowSize = struct {
     pub const width: u32 = 800;
     pub const height: u32 = 600;
@@ -38,9 +38,7 @@ pub fn main() !void {
     try gl.load(proc, glGetProcAddress);
 
     // create shader program
-    var shader_program: Shader = Shader.create("C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs", "C:\\Users\\craft\\Repositories\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
-    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.vs",
-    // "C:\\Users\\CraftLinks\\Documents\\GitHub\\craftlinks\\zig_learn_opengl\\src\\getting_started\\shaders\\shaders\\shader.fs");
+    var shader_program: Shader = Shader.create("src/getting_started/shaders/shaders/shader.vs", "src/getting_started/shaders/shaders/shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------

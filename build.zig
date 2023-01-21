@@ -15,6 +15,7 @@ fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime nam
 
     exe.addPackage(glfw.pkg);
     exe.addPackagePath("gl", "libs/gl.zig");
+    exe.addPackagePath("Shader", "libs/Shader.zig");
 
     try glfw.link(b, exe, .{});
 
@@ -27,7 +28,6 @@ fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime nam
     run_step.dependOn(&run_cmd.step);
 
     b.getInstallStep().dependOn(install);
-
 }
 
 

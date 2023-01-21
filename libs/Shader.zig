@@ -1,5 +1,5 @@
 const std = @import("std");
-const gl = @import("gl");
+const gl = @import("./gl.zig");
 const Shader = @This();
 
 // The program ID
@@ -12,11 +12,11 @@ pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
     defer gl.deleteShader(vertexShader);
 
-    const vs_file = std.fs.openFileAbsolute(vertex_path, .{}) catch unreachable;
+    const vs_file = std.fs.cwd().openFile(vertex_path, .{}) catch unreachable;
     var vs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
     _ = vs_file.readAll(&vs_code) catch unreachable;
 
-    const fs_file = std.fs.openFileAbsolute(fragment_path, .{}) catch unreachable;
+    const fs_file = std.fs.cwd().openFile(fragment_path, .{}) catch unreachable;
     var fs_code: [10 * 1024]u8 = [_]u8{0} ** (10 * 1024);
     _ = fs_file.readAll(&fs_code) catch unreachable;
 
@@ -52,7 +52,6 @@ pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
 
     // create a program object
     const shaderProgram = gl.createProgram();
-    std.debug.print("{any}", .{shaderProgram});
 
     // attach compiled shader objects to the program object and link
     gl.attachShader(shaderProgram, vertexShader);
@@ -68,10 +67,8 @@ pub fn create(vertex_path:[]const u8, fragment_path:[]const u8) Shader {
     return Shader{.ID = shaderProgram};
 }
 
-pub fn use(self: Shader) c_uint {
-    // std.debug.print("{any}", .{self.ID});
+pub fn use(self: Shader) void {
     gl.useProgram(self.ID);
-    return self.ID;
 }
 
 pub fn setBool(self: Shader, name: []const u8, value: bool) void {
