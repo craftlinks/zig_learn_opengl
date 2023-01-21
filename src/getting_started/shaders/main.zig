@@ -75,7 +75,7 @@ pub fn main() !void {
     while (!window.shouldClose()) {
         processInput(window);
 
-        gl.clearColor(0.2, 0.3, 0.7, 1.0);
+        gl.clearColor(0.2, 0.3, 0.1, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         _ = shader_program.use();

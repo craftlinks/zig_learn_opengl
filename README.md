@@ -19,9 +19,9 @@ Sample programs can be used together with the reference book: [Learn OpenGL - Gr
 ### Shaders
 - [**shaders**](src/getting_started/shaders/): Little programs that rest on the GPU <br />
 `zig build shaders-run`
+<br /><a href="src/getting_started/shaders"><img src="src/getting_started/shaders/image.png" alt="shaders" height="200"></a>
 
     [Shader](src/common/shader.zig) struct mirrors the C++ Shader Class in the book. 
 
     - WIP: 
-        - at the moment I have still a bug in the gl.VertexAttribPointer that needs to be fixed. Help appreciated.
-        - Implementing a utility 'Shader' struct to mirror the 'Shader' class in the book.
+        replace absolute file paths with relative paths
