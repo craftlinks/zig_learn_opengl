@@ -88,7 +88,7 @@ pub fn main() !void {
         const timeValue = glfw.getTime();
         const offsetValue = @floatCast(f32, @sin(timeValue) / 2.0);
 
-        shader_program.setVec3f(shader_program.ID, "offset", [3]f32{offsetValue, -offsetValue, offsetValue});
+        shader_program.setVec3f("offset", [3]f32{offsetValue, -offsetValue, offsetValue});
         shader_program.use();
 
         gl.bindVertexArray(VAO);

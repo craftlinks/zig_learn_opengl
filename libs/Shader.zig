@@ -78,18 +78,18 @@ pub fn use(self: Shader) void {
     gl.useProgram(self.ID);
 }
 
-pub fn setBool(self: Shader, name: []const u8, value: bool) void {
+pub fn setBool(self: Shader, name: [*c]const u8, value: bool) void {
     gl.uniform1i(gl.getUniformLocation(self.ID, name), @boolToInt(value));
 }
 
-pub fn setInt(self: Shader, name: []const u8, value: u32) void {
+pub fn setInt(self: Shader, name: [*c]const u8, value: u32) void {
     gl.uniform1i(gl.getUniformLocation(self.ID, name), @intCast(c_int,value));
 }
 
-pub fn setFloat(self: Shader, name: []const u8, value: f32) void {
+pub fn setFloat(self: Shader, name: [*c]const u8, value: f32) void {
     gl.uniform1f(gl.getUniformLocation(self.ID, name), value);
 }
 
-pub fn setVec3f(self: Shader, name: []const u8, value: [3]f32) void {
+pub fn setVec3f(self: Shader, name: [*c]const u8, value: [3]f32) void {
     gl.uniform3f(gl.getUniformLocation(self.ID, name), value[0], value[1], value[2]);
 }
