@@ -49,11 +49,12 @@ pub fn main() !void {
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    const vertices = [_]f32{ 
-        -0.5, -0.5, 0.0,    1.0, 0.0, 0.0,
-         0.5, -0.5, 0.0,    0.0, 1.0, 0.0,
-         0.0, 0.5, 0.0,     0.0, 0.0, 1.0,      
+    const vertices = [_]f32{
+        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+        0.5,  -0.5, 0.0, 0.0, 1.0, 0.0,
+        0.0,  0.5,  0.0, 0.0, 0.0, 1.0,
     };
+
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
 
@@ -83,7 +84,12 @@ pub fn main() !void {
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        _ = shader_program.use();
+        // update the uniform color
+        const timeValue = glfw.getTime();
+        const offsetValue = @floatCast(f32, @sin(timeValue) / 2.0);
+
+        shader_program.setVec3f(shader_program.ID, "offset", [3]f32{offsetValue, -offsetValue, offsetValue});
+        shader_program.use();
 
         gl.bindVertexArray(VAO);
         gl.drawArrays(gl.TRIANGLES, 0, 3);

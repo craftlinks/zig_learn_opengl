@@ -89,3 +89,7 @@ pub fn setInt(self: Shader, name: []const u8, value: u32) void {
 pub fn setFloat(self: Shader, name: []const u8, value: f32) void {
     gl.uniform1f(gl.getUniformLocation(self.ID, name), value);
 }
+
+pub fn setVec3f(self: Shader, name: []const u8, value: [3]f32) void {
+    gl.uniform3f(gl.getUniformLocation(self.ID, name), value[0], value[1], value[2]);
+}
