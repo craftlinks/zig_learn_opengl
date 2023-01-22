@@ -45,7 +45,7 @@ pub fn main() !void {
     const arena_allocator = arena_allocator_state.allocator();
 
     // create shader program
-    var shader_program: Shader = Shader.create(arena_allocator, "shaders\\shader.vs", "shaders\\shader.fs");
+    var shader_program: Shader = Shader.create(arena_allocator, "shaders\\shader_ex3.vs", "shaders\\shader_ex3.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -86,9 +86,9 @@ pub fn main() !void {
 
         // update the uniform color
         const timeValue = glfw.getTime();
-        const offsetValue = @floatCast(f32, @sin(timeValue) / 2.0);
+        const offsetValue = @floatCast(f32, @sin(timeValue*2)/2.0 + 0.5);
 
-        shader_program.setVec3f("offset", [3]f32{offsetValue, -offsetValue, offsetValue});
+        shader_program.setVec3f("offset", [3]f32{offsetValue, offsetValue, offsetValue});
         shader_program.use();
 
         gl.bindVertexArray(VAO);
