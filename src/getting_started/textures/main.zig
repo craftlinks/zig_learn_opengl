@@ -1,7 +1,9 @@
 const std = @import("std");
 const glfw = @import("glfw");
+const zstbi = @import("zstbi");
 const gl = @import("gl");
 const Shader = @import("Shader");
+const common = @import("common");
 
 const WindowSize = struct {
     pub const width: u32 = 800;
@@ -42,8 +44,16 @@ pub fn main() !void {
     var allocator = gpa.allocator();
     var arena_allocator_state = std.heap.ArenaAllocator.init(allocator);
     defer arena_allocator_state.deinit();
-    const arena_allocator = arena_allocator_state.allocator();
-    _ = arena_allocator;
+    const arena = arena_allocator_state.allocator();
+
+    // zstbi: loading an image.
+    zstbi.init(allocator);
+    defer zstbi.deinit();
+    const image_path = common.pathToContent(arena, "content\\container.jpg") catch unreachable;
+    var image = try zstbi.Image.init(&image_path, 0);
+    defer image.deinit();
+    std.debug.print("img width: {any}\nimg height: {any}\n", .{image.width, image.height});
+
 
     // create shader program
     // var shader_program: Shader = Shader.create(arena_allocator, "shaders\\shader_ex3.vs", "shaders\\shader_ex3.fs");

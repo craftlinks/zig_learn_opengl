@@ -1,5 +1,6 @@
 const std = @import("std");
 const glfw = @import("libs/mach-glfw/build.zig");
+const zstbi = @import("libs/zstbi/build.zig");
 
 
 pub const Options = struct {
@@ -14,10 +15,13 @@ fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime nam
         exe.strip = true;
 
     exe.addPackage(glfw.pkg);
+    exe.addPackage(zstbi.pkg);
     exe.addPackagePath("gl", "libs/gl.zig");
     exe.addPackagePath("Shader", "libs/Shader.zig");
+    exe.addPackagePath("common", "libs/common.zig");
 
     try glfw.link(b, exe, .{});
+    zstbi.link(exe);
 
     const install = b.step(name, "Build '" ++ name);
     install.dependOn(&b.addInstallArtifact(exe).step);
