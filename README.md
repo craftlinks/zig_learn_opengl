@@ -26,4 +26,6 @@ Sample programs can be used together with the reference book: [Learn OpenGL - Gr
     [Shader](src/common/shader.zig) struct mirrors the C++ Shader Class in the book. 
 
 ### Textures
-    - WIP
+- [**textures**](src/getting_started/textures/): Decorate objects with textures <br />
+`zig build textures-run`
+<br /><a href="src/getting_started/textures"><img src="src/getting_started/textures/image.png" alt="textures" height="200"></a>

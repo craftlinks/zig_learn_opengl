@@ -110,13 +110,13 @@ pub fn main() !void {
     const image1_path = common.pathToContent(arena, "content\\container.jpg") catch unreachable;
     var image1 = try zstbi.Image.init(&image1_path, 0);
     defer image1.deinit();
-    std.debug.print("Image 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{image1.width, image1.height, image1.num_components});
+    std.debug.print("\nImage 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{image1.width, image1.height, image1.num_components});
 
     zstbi.setFlipVerticallyOnLoad(true);
     const image2_path = common.pathToContent(arena, "content\\awesomeface.png") catch unreachable;
     var image2 = try zstbi.Image.init(&image2_path, 0);
     defer image2.deinit();
-    std.debug.print("Image 2 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{image2.width, image2.height, image2.num_components});
+    std.debug.print("\nImage 2 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{image2.width, image2.height, image2.num_components});
 
     // Create and bind texture1 resource
     var texture1: c_uint = undefined;
