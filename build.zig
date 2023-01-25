@@ -48,12 +48,14 @@ pub fn build(b: *std.build.Builder) !void {
     const shaders = @import("src/getting_started/shaders/build.zig");
     const textures = @import("src/getting_started/textures/build.zig");
     const transformations = @import("src/getting_started/transformations/build.zig");
+    const coordinate_systems = @import("src/getting_started/coordinate_systems/build.zig");
 
     try installExe(b, hello_triangle.build(b, options), "hello_triangle");
     try installExe(b, hello_rectangle.build(b, options), "hello_rectangle");
     try installExe(b, shaders.build(b, options), "shaders");
     try installExe(b, textures.build(b, options), "textures");
     try installExe(b, transformations.build(b, options), "transformations");
+    try installExe(b, coordinate_systems.build(b, options), "coordinate_systems");
 }
 
 
