@@ -54,6 +54,16 @@ pub fn main() !void {
     defer image.deinit();
     std.debug.print("img width: {any}\nimg height: {any}\n", .{image.width, image.height});
 
+    // Create and bind texture resource
+    var texture: c_uint = undefined;
+
+    gl.genTextures(1, &texture);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Generate the texture
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int,image.width), @intCast(c_int,image.height), 0, gl.RGB, gl.UNSIGNED_BYTE, @ptrCast([*c] const u8, image.data));
+    gl.generateMipmap(gl.TEXTURE_2D);
+
 
     // create shader program
     // var shader_program: Shader = Shader.create(arena_allocator, "shaders\\shader_ex3.vs", "shaders\\shader_ex3.fs");
