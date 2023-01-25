@@ -1,7 +1,7 @@
 const std = @import("std");
 const glfw = @import("libs/mach-glfw/build.zig");
 const zstbi = @import("libs/zstbi/build.zig");
-
+const zmath = @import("libs/zmath/build.zig");
 
 pub const Options = struct {
     build_mode: std.builtin.Mode,
@@ -16,6 +16,7 @@ fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime nam
 
     exe.addPackage(glfw.pkg);
     exe.addPackage(zstbi.pkg);
+    exe.addPackage(zmath.pkg);
     exe.addPackagePath("gl", "libs/gl.zig");
     exe.addPackagePath("Shader", "libs/Shader.zig");
     exe.addPackagePath("common", "libs/common.zig");
