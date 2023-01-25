@@ -55,6 +55,7 @@ pub fn main() !void {
     defer image1.deinit();
     std.debug.print("Image 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{image1.width, image1.height, image1.num_components});
 
+    zstbi.setFlipVerticallyOnLoad(true);
     const image2_path = common.pathToContent(arena, "content\\awesomeface.png") catch unreachable;
     var image2 = try zstbi.Image.init(&image2_path, 0);
     defer image2.deinit();
