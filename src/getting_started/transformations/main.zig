@@ -159,17 +159,6 @@ pub fn main() !void {
     shader_program.setInt("texture1", 0);
     shader_program.setInt("texture2", 1);
 
-    // Construction of the tranformation matrix
-    const rotZ = zm.rotationZ(math.pi / 2.0);
-    const scale = zm.scaling(0.5, 0.5, 0.5);
-    const transformM = zm.mul(rotZ, scale);
-    var transform: [16]f32 = undefined;
-    zm.storeMat(&transform, transformM);
-
-    // Sending our transformation matrix to our vertex shader
-    const transformLoc = gl.getUniformLocation(shader_program.ID, "transform");
-    gl.uniformMatrix4fv(transformLoc, 1, gl.FALSE, &transform);
-
     while (!window.shouldClose()) {
         processInput(window);
 
@@ -180,6 +169,18 @@ pub fn main() !void {
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, texture2);
         gl.bindVertexArray(VAO);
+
+        // Construction of the tranformation matrix
+        const rotZ = zm.rotationZ(@floatCast(f32,glfw.getTime()));
+        const scale = zm.scaling(0.5, 0.5, 0.5);
+        const transformM = zm.mul(rotZ, scale);
+        var transform: [16]f32 = undefined;
+        zm.storeMat(&transform, transformM);
+
+        // Sending our transformation matrix to our vertex shader
+        const transformLoc = gl.getUniformLocation(shader_program.ID, "transform");
+        gl.uniformMatrix4fv(transformLoc, 1, gl.FALSE, &transform);
+
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, null);
 
         window.swapBuffers();
