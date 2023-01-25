@@ -1,4 +1,5 @@
 const std = @import("std");
+const math = std.math;
 const glfw = @import("glfw");
 const zstbi = @import("zstbi");
 const zm = @import("zmath");
@@ -58,7 +59,7 @@ pub fn main() !void {
         0.5, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, // top right
         0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, // bottom right
         -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, // bottom left
-        -0.5, 0.5,  0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
+        -0.5, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
     };
 
     const indices = [_]c_uint{
@@ -157,6 +158,17 @@ pub fn main() !void {
     shader_program.use();
     shader_program.setInt("texture1", 0);
     shader_program.setInt("texture2", 1);
+
+    // Construction of the tranformation matrix
+    const rotZ = zm.rotationZ(math.pi / 2.0);
+    const scale = zm.scaling(0.5, 0.5, 0.5);
+    const transformM = zm.mul(rotZ, scale);
+    var transform: [16]f32 = undefined;
+    zm.storeMat(&transform, transformM);
+
+    // Sending our transformation matrix to our vertex shader
+    const transformLoc = gl.getUniformLocation(shader_program.ID, "transform");
+    gl.uniformMatrix4fv(transformLoc, 1, gl.FALSE, &transform);
 
     while (!window.shouldClose()) {
         processInput(window);
