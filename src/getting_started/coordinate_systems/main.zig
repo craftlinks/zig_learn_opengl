@@ -108,15 +108,8 @@ pub fn main() !void {
     -0.5,  0.5, -0.5,  0.0, 1.0
 };
 
-    const indices = [_]c_uint{
-        // note that we start from 0!
-        0, 1, 3, // first triangle
-        1, 2, 3, // second triangle
-    };
-
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
-    var EBO: c_uint = undefined;
 
     gl.genVertexArrays(1, &VAO);
     defer gl.deleteVertexArrays(1, &VAO);
@@ -124,17 +117,11 @@ pub fn main() !void {
     gl.genBuffers(1, &VBO);
     defer gl.deleteBuffers(1, &VBO);
 
-    gl.genBuffers(1, &EBO);
-    defer gl.deleteBuffers(1, &EBO);
-
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     gl.bindVertexArray(VAO);
     gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
     // Fill our buffer with the vertex data
     gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices_3D.len, &vertices_3D, gl.STATIC_DRAW);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, EBO);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 6 * @sizeOf(c_uint), &indices, gl.STATIC_DRAW);
 
     // vertex
     gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 5 * @sizeOf(f32), null);
