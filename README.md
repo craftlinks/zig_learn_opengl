@@ -43,6 +43,9 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 `zig build coordinate_systems-run`
 <br /><a href="src/getting_started/coordinate_systems"><img src="src/getting_started/coordinate_systems/image.png" alt="coordinate_systems" height="200"></a>
 
+### Camera
+    - WIP...
+
 
 ## **II. Lighting**
 ...
