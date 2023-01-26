@@ -93,3 +93,8 @@ pub fn setFloat(self: Shader, name: [*c]const u8, value: f32) void {
 pub fn setVec3f(self: Shader, name: [*c]const u8, value: [3]f32) void {
     gl.uniform3f(gl.getUniformLocation(self.ID, name), value[0], value[1], value[2]);
 }
+
+pub fn setMat4f(self: Shader, name: [*c]const u8, value: [16]f32) void {
+     const matLoc = gl.getUniformLocation(self.ID, name);
+    gl.uniformMatrix4fv(matLoc, 1, gl.FALSE, &value);
+}

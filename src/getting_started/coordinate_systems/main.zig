@@ -230,7 +230,7 @@ pub fn main() !void {
         gl.bindVertexArray(VAO);
 
         // Projection matrix 
-        var projM = x:  {
+        const projM = x:  {
             var window_size = window.getSize();
             var fov = @intToFloat(f32,window_size.width) / @intToFloat(f32,window_size.height);
             var projM = zm.perspectiveFovRhGl(45.0 * rad_conversion, fov, 0.1, 100.0);
@@ -238,22 +238,17 @@ pub fn main() !void {
         };
         zm.storeMat(&proj, projM);
 
-        const viewLoc = gl.getUniformLocation(shader_program.ID, "view");
-        gl.uniformMatrix4fv(viewLoc, 1, gl.FALSE, &view);
-        const projLoc = gl.getUniformLocation(shader_program.ID, "projection");
-        gl.uniformMatrix4fv(projLoc, 1, gl.FALSE, &proj);
-
-
+        shader_program.setMat4f("view", view);
+        shader_program.setMat4f("projection", proj);
+        
         for (cube_positions) | cube_position, i | {
             const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
-            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32,glfw.getTime()) * 55.0 * (((@mod(@intToFloat(f32,i + 1),2.0))*2.0)-1.0) * rad_conversion);
+            const rotation_direction = (((@mod(@intToFloat(f32,i + 1),2.0))*2.0)-1.0);
+            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32,glfw.getTime()) * 55.0 * rotation_direction * rad_conversion);
             const modelM = zm.mul(cube_rot, cube_trans);
             zm.storeMat(&model, modelM);
-            const modelLoc = gl.getUniformLocation(shader_program.ID, "model");
-            gl.uniformMatrix4fv(modelLoc, 1, gl.FALSE, &model);
-
+            shader_program.setMat4f("model", model);
             gl.drawArrays(gl.TRIANGLES, 0, 36);
-
         } 
 
         window.swapBuffers();
