@@ -65,48 +65,61 @@ pub fn main() !void {
     _ = vertices_2D; 
 
     const vertices_3D = [_]f32 {
-    -0.5, -0.5, -0.5,  0.0, 0.0,
-     0.5, -0.5, -0.5,  1.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-    -0.5,  0.5, -0.5,  0.0, 1.0,
-    -0.5, -0.5, -0.5,  0.0, 0.0,
+        -0.5, -0.5, -0.5,  0.0, 0.0,
+         0.5, -0.5, -0.5,  1.0, 0.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+        -0.5,  0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 0.0,
 
-    -0.5, -0.5,  0.5,  0.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 1.0,
-    -0.5,  0.5,  0.5,  0.0, 1.0,
-    -0.5, -0.5,  0.5,  0.0, 0.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 1.0,
+         0.5,  0.5,  0.5,  1.0, 1.0,
+        -0.5,  0.5,  0.5,  0.0, 1.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
 
-    -0.5,  0.5,  0.5,  1.0, 0.0,
-    -0.5,  0.5, -0.5,  1.0, 1.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0,
-    -0.5, -0.5,  0.5,  0.0, 0.0,
-    -0.5,  0.5,  0.5,  1.0, 0.0,
+        -0.5,  0.5,  0.5,  1.0, 0.0,
+        -0.5,  0.5, -0.5,  1.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+        -0.5,  0.5,  0.5,  1.0, 0.0,
 
-     0.5,  0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5,  0.5,  0.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5,  0.5,  0.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
 
-    -0.5, -0.5, -0.5,  0.0, 1.0,
-     0.5, -0.5, -0.5,  1.0, 1.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,
-    -0.5, -0.5,  0.5,  0.0, 0.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5, -0.5,  1.0, 1.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
 
-    -0.5,  0.5, -0.5,  0.0, 1.0,
-     0.5,  0.5, -0.5,  1.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,
-    -0.5,  0.5,  0.5,  0.0, 0.0,
-    -0.5,  0.5, -0.5,  0.0, 1.0
-};
+        -0.5,  0.5, -0.5,  0.0, 1.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+        -0.5,  0.5,  0.5,  0.0, 0.0,
+        -0.5,  0.5, -0.5,  0.0, 1.0
+    };
+
+    const cube_positions = [_][3]f32{
+        .{ 0.0,  0.0,  0.0}, 
+        .{ 2.0,  5.0, -15.0}, 
+        .{-1.5, -2.2, -2.5},  
+        .{-3.8, -2.0, -12.3},  
+        .{ 2.4, -0.4, -3.5},  
+        .{-1.7,  3.0, -7.5},  
+        .{ 1.3, -2.0, -2.5},  
+        .{ 1.5,  2.0, -2.5}, 
+        .{ 1.5,  0.2, -1.5}, 
+        .{-1.3,  1.0, -1.5} 
+    };
 
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
@@ -198,7 +211,7 @@ pub fn main() !void {
     var model: [16]f32 = undefined;
     
     // View matrix
-    const viewM = zm.translation(0.0, 0.0, -3.0);
+    const viewM = zm.translation(0.0, 0.0, -5.0);
     var view: [16]f32 = undefined;
     zm.storeMat(&view, viewM);
     
@@ -216,10 +229,6 @@ pub fn main() !void {
         gl.bindTexture(gl.TEXTURE_2D, texture2);
         gl.bindVertexArray(VAO);
 
-        // Model matrix
-        const modelM = zm.rotationX(@floatCast(f32,glfw.getTime()) * -55.0 * rad_conversion);
-        zm.storeMat(&model, modelM);
-
         // Projection matrix 
         var projM = x:  {
             var window_size = window.getSize();
@@ -229,16 +238,23 @@ pub fn main() !void {
         };
         zm.storeMat(&proj, projM);
 
-
-        // Sending our transformation matrices to our vertex shader
-        const modelLoc = gl.getUniformLocation(shader_program.ID, "model");
-        gl.uniformMatrix4fv(modelLoc, 1, gl.FALSE, &model);
         const viewLoc = gl.getUniformLocation(shader_program.ID, "view");
         gl.uniformMatrix4fv(viewLoc, 1, gl.FALSE, &view);
         const projLoc = gl.getUniformLocation(shader_program.ID, "projection");
         gl.uniformMatrix4fv(projLoc, 1, gl.FALSE, &proj);
 
-        gl.drawArrays(gl.TRIANGLES, 0, 36);
+
+        for (cube_positions) | cube_position, i | {
+            const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
+            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32,glfw.getTime()) * 55.0 * (((@mod(@intToFloat(f32,i + 1),2.0))*2.0)-1.0) * rad_conversion);
+            const modelM = zm.mul(cube_rot, cube_trans);
+            zm.storeMat(&model, modelM);
+            const modelLoc = gl.getUniformLocation(shader_program.ID, "model");
+            gl.uniformMatrix4fv(modelLoc, 1, gl.FALSE, &model);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+
+        } 
 
         window.swapBuffers();
         glfw.pollEvents();
