@@ -196,6 +196,9 @@ pub fn main() !void {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int, image2.width), @intCast(c_int, image2.height), 0, gl.RGBA, gl.UNSIGNED_BYTE, @ptrCast([*c]const u8, image2.data));
     gl.generateMipmap(gl.TEXTURE_2D);
 
+    // Enable OpenGL depth testing (use Z-buffer information)
+    gl.enable(gl.DEPTH_TEST);
+
     shader_program.use();
     shader_program.setInt("texture1", 0);
     shader_program.setInt("texture2", 1);
@@ -219,7 +222,7 @@ pub fn main() !void {
         processInput(window);
 
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture1);
         gl.activeTexture(gl.TEXTURE1);
