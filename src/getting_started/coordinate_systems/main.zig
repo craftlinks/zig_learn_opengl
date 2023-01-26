@@ -54,13 +54,59 @@ pub fn main() !void {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    const vertices = [_]f32{
+    const vertices_2D = [_]f32{
         // positions      // colors        // texture coords
         0.5, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, // top right
         0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, // bottom right
         -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, // bottom left
         -0.5, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
     };
+
+    _ = vertices_2D; 
+
+    const vertices_3D = [_]f32 {
+    -0.5, -0.5, -0.5,  0.0, 0.0,
+     0.5, -0.5, -0.5,  1.0, 0.0,
+     0.5,  0.5, -0.5,  1.0, 1.0,
+     0.5,  0.5, -0.5,  1.0, 1.0,
+    -0.5,  0.5, -0.5,  0.0, 1.0,
+    -0.5, -0.5, -0.5,  0.0, 0.0,
+
+    -0.5, -0.5,  0.5,  0.0, 0.0,
+     0.5, -0.5,  0.5,  1.0, 0.0,
+     0.5,  0.5,  0.5,  1.0, 1.0,
+     0.5,  0.5,  0.5,  1.0, 1.0,
+    -0.5,  0.5,  0.5,  0.0, 1.0,
+    -0.5, -0.5,  0.5,  0.0, 0.0,
+
+    -0.5,  0.5,  0.5,  1.0, 0.0,
+    -0.5,  0.5, -0.5,  1.0, 1.0,
+    -0.5, -0.5, -0.5,  0.0, 1.0,
+    -0.5, -0.5, -0.5,  0.0, 1.0,
+    -0.5, -0.5,  0.5,  0.0, 0.0,
+    -0.5,  0.5,  0.5,  1.0, 0.0,
+
+     0.5,  0.5,  0.5,  1.0, 0.0,
+     0.5,  0.5, -0.5,  1.0, 1.0,
+     0.5, -0.5, -0.5,  0.0, 1.0,
+     0.5, -0.5, -0.5,  0.0, 1.0,
+     0.5, -0.5,  0.5,  0.0, 0.0,
+     0.5,  0.5,  0.5,  1.0, 0.0,
+
+    -0.5, -0.5, -0.5,  0.0, 1.0,
+     0.5, -0.5, -0.5,  1.0, 1.0,
+     0.5, -0.5,  0.5,  1.0, 0.0,
+     0.5, -0.5,  0.5,  1.0, 0.0,
+    -0.5, -0.5,  0.5,  0.0, 0.0,
+    -0.5, -0.5, -0.5,  0.0, 1.0,
+
+    -0.5,  0.5, -0.5,  0.0, 1.0,
+     0.5,  0.5, -0.5,  1.0, 1.0,
+     0.5,  0.5,  0.5,  1.0, 0.0,
+     0.5,  0.5,  0.5,  1.0, 0.0,
+    -0.5,  0.5,  0.5,  0.0, 0.0,
+    -0.5,  0.5, -0.5,  0.0, 1.0
+};
 
     const indices = [_]c_uint{
         // note that we start from 0!
@@ -85,24 +131,19 @@ pub fn main() !void {
     gl.bindVertexArray(VAO);
     gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
     // Fill our buffer with the vertex data
-    gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices_3D.len, &vertices_3D, gl.STATIC_DRAW);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, EBO);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 6 * @sizeOf(c_uint), &indices, gl.STATIC_DRAW);
 
     // vertex
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 8 * @sizeOf(f32), null);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 5 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
 
-    // colors
-    const col_offset: [*c]c_uint = (3 * @sizeOf(f32));
-    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 8 * @sizeOf(f32), col_offset);
-    gl.enableVertexAttribArray(1);
-
     // texture coords
-    const tex_offset: [*c]c_uint = (6 * @sizeOf(f32));
-    gl.vertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, 8 * @sizeOf(f32), tex_offset);
-    gl.enableVertexAttribArray(2);
+    const tex_offset: [*c]c_uint = (3 * @sizeOf(f32));
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 5 * @sizeOf(f32), tex_offset);
+    gl.enableVertexAttribArray(1);
 
     // zstbi: loading an image.
     zstbi.init(allocator);
@@ -162,14 +203,15 @@ pub fn main() !void {
     // Create the transformation matrices:
     // Degree to radians conversion factor
     const rad_conversion = math.pi / 180.0;
-    // Model matrix
-    const modelM = zm.rotationX(-55.0 * rad_conversion);
+    
+    // Buffer to store Model matrix
     var model: [16]f32 = undefined;
-    zm.storeMat(&model, modelM);
+    
     // View matrix
     const viewM = zm.translation(0.0, 0.0, -3.0);
     var view: [16]f32 = undefined;
     zm.storeMat(&view, viewM);
+    
     // Buffer to store Orojection matrix (in render loop)
     var proj: [16]f32 = undefined;
 
@@ -183,6 +225,10 @@ pub fn main() !void {
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, texture2);
         gl.bindVertexArray(VAO);
+
+        // Model matrix
+        const modelM = zm.rotationX(@floatCast(f32,glfw.getTime()) * -55.0 * rad_conversion);
+        zm.storeMat(&model, modelM);
 
         // Projection matrix 
         var projM = x:  {
@@ -202,7 +248,7 @@ pub fn main() !void {
         const projLoc = gl.getUniformLocation(shader_program.ID, "projection");
         gl.uniformMatrix4fv(projLoc, 1, gl.FALSE, &proj);
 
-        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, null);
+        gl.drawArrays(gl.TRIANGLES, 0, 36);
 
         window.swapBuffers();
         glfw.pollEvents();
