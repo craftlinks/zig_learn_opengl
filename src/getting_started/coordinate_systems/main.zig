@@ -214,6 +214,7 @@ pub fn main() !void {
     const viewM = zm.translation(0.0, 0.0, -5.0);
     var view: [16]f32 = undefined;
     zm.storeMat(&view, viewM);
+    shader_program.setMat4f("view", view);
     
     // Buffer to store Orojection matrix (in render loop)
     var proj: [16]f32 = undefined;
@@ -238,7 +239,6 @@ pub fn main() !void {
         };
         zm.storeMat(&proj, projM);
 
-        shader_program.setMat4f("view", view);
         shader_program.setMat4f("projection", proj);
         
         for (cube_positions) | cube_position, i | {
