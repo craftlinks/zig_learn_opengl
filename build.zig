@@ -49,7 +49,7 @@ pub fn build(b: *std.build.Builder) !void {
     const textures = @import("src/getting_started/textures/build.zig");
     const transformations = @import("src/getting_started/transformations/build.zig");
     const coordinate_systems = @import("src/getting_started/coordinate_systems/build.zig");
-    const camera = @import("src/getting_started/camera/build.zig");
+    const camera_rotate = @import("src/getting_started/camera_rotate/build.zig");
 
     try installExe(b, hello_triangle.build(b, options), "hello_triangle");
     try installExe(b, hello_rectangle.build(b, options), "hello_rectangle");
@@ -57,7 +57,7 @@ pub fn build(b: *std.build.Builder) !void {
     try installExe(b, textures.build(b, options), "textures");
     try installExe(b, transformations.build(b, options), "transformations");
     try installExe(b, coordinate_systems.build(b, options), "coordinate_systems");
-    try installExe(b, camera.build(b, options), "camera");
+    try installExe(b, camera_rotate.build(b, options), "camera_rotate");
 }
 
 

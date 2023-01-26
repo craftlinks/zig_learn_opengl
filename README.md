@@ -44,8 +44,8 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 <br /><a href="src/getting_started/coordinate_systems"><img src="src/getting_started/coordinate_systems/image.png" alt="coordinate_systems" height="200"></a>
 
 ### Camera
-    - WIP...
-
+- [**Camera rotation**](src/getting_started/camera_rotate/): Camera rotation around world origin <br />
+`zig build camera_rotate-run`
 
 ## **II. Lighting**
 ...

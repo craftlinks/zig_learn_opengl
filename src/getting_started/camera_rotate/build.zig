@@ -9,7 +9,7 @@ inline fn thisDir() []const u8 {
 const content_dir = "content/";
 
 pub fn build(b: *std.build.Builder, options: Options) *std.build.LibExeObjStep {
-    const exe = b.addExecutable("camera", thisDir() ++ "/main.zig");
+    const exe = b.addExecutable("camera_rotate", thisDir() ++ "/main.zig");
 
     const install_content_step = b.addInstallDirectory(.{
         .source_dir = thisDir() ++ "/" ++ content_dir,

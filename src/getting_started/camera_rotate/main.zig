@@ -211,10 +211,7 @@ pub fn main() !void {
     var model: [16]f32 = undefined;
     
     // View matrix
-    const viewM = zm.translation(0.0, 0.0, -5.0);
     var view: [16]f32 = undefined;
-    zm.storeMat(&view, viewM);
-    shader_program.setMat4f("view", view);
     
     // Buffer to store Orojection matrix (in render loop)
     var proj: [16]f32 = undefined;
@@ -238,16 +235,25 @@ pub fn main() !void {
             break :x projM;
         };
         zm.storeMat(&proj, projM);
-
         shader_program.setMat4f("projection", proj);
+
+        // View matrix: Camera
+        const radius: f32 = 10.0;
+        const camX: f32 = @floatCast(f32,@sin(glfw.getTime())) * radius;
+        const camZ: f32 = @floatCast(f32,@cos(glfw.getTime())) * radius;
+        const viewM = zm.lookAtRh(zm.loadArr3(.{camX, 0.0, camZ}), zm.loadArr3(.{0.0, 0.0, 0.0}), zm.loadArr3(.{0.0, 1.0, 0.0}));
+        zm.storeMat(&view, viewM);
+        shader_program.setMat4f("view", view);
         
         for (cube_positions) | cube_position, i | {
+            // Model matrix
             const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
             const rotation_direction = (((@mod(@intToFloat(f32,i + 1),2.0))*2.0)-1.0);
             const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32,glfw.getTime()) * 55.0 * rotation_direction * rad_conversion);
             const modelM = zm.mul(cube_rot, cube_trans);
             zm.storeMat(&model, modelM);
             shader_program.setMat4f("model", model);
+            
             gl.drawArrays(gl.TRIANGLES, 0, 36);
         } 
 
