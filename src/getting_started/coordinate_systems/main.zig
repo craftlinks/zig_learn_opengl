@@ -159,6 +159,20 @@ pub fn main() !void {
     shader_program.setInt("texture1", 0);
     shader_program.setInt("texture2", 1);
 
+    // Create the transformation matrices:
+    // Degree to radians conversion factor
+    const rad_conversion = math.pi / 180.0;
+    // Model matrix
+    const modelM = zm.rotationX(-55.0 * rad_conversion);
+    var model: [16]f32 = undefined;
+    zm.storeMat(&model, modelM);
+    // View matrix
+    const viewM = zm.translation(0.0, 0.0, -3.0);
+    var view: [16]f32 = undefined;
+    zm.storeMat(&view, viewM);
+    // Buffer to store Orojection matrix (in render loop)
+    var proj: [16]f32 = undefined;
+
     while (!window.shouldClose()) {
         processInput(window);
 
@@ -170,16 +184,23 @@ pub fn main() !void {
         gl.bindTexture(gl.TEXTURE_2D, texture2);
         gl.bindVertexArray(VAO);
 
-        // Construction of the tranformation matrix
-        const rotZ = zm.rotationZ(@floatCast(f32,glfw.getTime()));
-        const scale = zm.scaling(0.5, 0.5, 0.5);
-        const transformM = zm.mul(rotZ, scale);
-        var transform: [16]f32 = undefined;
-        zm.storeMat(&transform, transformM);
+        // Projection matrix 
+        var projM = x:  {
+            var window_size = window.getSize();
+            var fov = @intToFloat(f32,window_size.width) / @intToFloat(f32,window_size.height);
+            var projM = zm.perspectiveFovRhGl(45.0 * rad_conversion, fov, 0.1, 100.0);
+            break :x projM;
+        };
+        zm.storeMat(&proj, projM);
 
-        // Sending our transformation matrix to our vertex shader
-        const transformLoc = gl.getUniformLocation(shader_program.ID, "transform");
-        gl.uniformMatrix4fv(transformLoc, 1, gl.FALSE, &transform);
+
+        // Sending our transformation matrices to our vertex shader
+        const modelLoc = gl.getUniformLocation(shader_program.ID, "model");
+        gl.uniformMatrix4fv(modelLoc, 1, gl.FALSE, &model);
+        const viewLoc = gl.getUniformLocation(shader_program.ID, "view");
+        gl.uniformMatrix4fv(viewLoc, 1, gl.FALSE, &view);
+        const projLoc = gl.getUniformLocation(shader_program.ID, "projection");
+        gl.uniformMatrix4fv(projLoc, 1, gl.FALSE, &proj);
 
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, null);
 

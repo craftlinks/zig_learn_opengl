@@ -33,7 +33,7 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 `zig build textures-run`
 <br /><a href="src/getting_started/textures"><img src="src/getting_started/textures/image.png" alt="textures" height="200"></a>
 
-### transformations
+### Transformations
 - [**Transformations**](src/getting_started/transformations/): Apply a transformation matrix to vertex data <br />
 `zig build transformations-run`
 <br /><a href="src/getting_started/transformations"><img src="src/getting_started/transformations/image.png" alt="transformations" height="200"></a>
