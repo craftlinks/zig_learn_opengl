@@ -7,10 +7,12 @@ const gl = @import("gl");
 const Shader = @import("Shader");
 const common = @import("common");
 
+// Camera
 var camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
 const camera_front = zm.loadArr3(.{ 0.0, 0.0, -1.0 });
 const camera_up = zm.loadArr3(.{ 0.0, 1.0, 0.0 });
 
+// Timing
 var delta_time: f32 = 0.0;
 var last_frame: f32 = 0.0;
 
@@ -171,10 +173,13 @@ pub fn main() !void {
     var proj: [16]f32 = undefined;
 
     while (!window.shouldClose()) {
-        processInput(window);
+        
+        // Time per frame
         const current_frame = @floatCast(f32, glfw.getTime());
         delta_time = current_frame - last_frame;
         last_frame = current_frame;
+
+        processInput(window);
 
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
