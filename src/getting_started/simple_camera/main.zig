@@ -10,7 +10,9 @@ const common = @import("common");
 var camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
 const camera_front = zm.loadArr3(.{ 0.0, 0.0, -1.0 });
 const camera_up = zm.loadArr3(.{ 0.0, 1.0, 0.0 });
-const camera_speed = zm.f32x4s(0.005);
+
+var delta_time: f32 = 0.0;
+var last_frame: f32 = 0.0;
 
 const WindowSize = struct {
     pub const width: u32 = 800;
@@ -170,6 +172,9 @@ pub fn main() !void {
 
     while (!window.shouldClose()) {
         processInput(window);
+        const current_frame = @floatCast(f32, glfw.getTime());
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
 
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -225,6 +230,9 @@ fn processInput(window: glfw.Window) void {
     if (glfw.Window.getKey(window, glfw.Key.escape) == glfw.Action.press) {
         _ = glfw.Window.setShouldClose(window, true);
     }
+
+    const camera_speed = zm.f32x4s(5 * delta_time);
+
     if (glfw.Window.getKey(window, glfw.Key.w) == glfw.Action.press) {
         camera_pos += camera_speed * camera_front;
     }
