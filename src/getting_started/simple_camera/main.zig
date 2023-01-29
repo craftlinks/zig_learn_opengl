@@ -7,6 +7,11 @@ const gl = @import("gl");
 const Shader = @import("Shader");
 const common = @import("common");
 
+var camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
+const camera_front = zm.loadArr3(.{ 0.0, 0.0, -1.0 });
+const camera_up = zm.loadArr3(.{ 0.0, 1.0, 0.0 });
+const camera_speed = zm.f32x4s(0.005);
+
 const WindowSize = struct {
     pub const width: u32 = 800;
     pub const height: u32 = 600;
@@ -62,64 +67,11 @@ pub fn main() !void {
         -0.5, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
     };
 
-    _ = vertices_2D; 
+    _ = vertices_2D;
 
-    const vertices_3D = [_]f32 {
-        -0.5, -0.5, -0.5,  0.0, 0.0,
-         0.5, -0.5, -0.5,  1.0, 0.0,
-         0.5,  0.5, -0.5,  1.0, 1.0,
-         0.5,  0.5, -0.5,  1.0, 1.0,
-        -0.5,  0.5, -0.5,  0.0, 1.0,
-        -0.5, -0.5, -0.5,  0.0, 0.0,
+    const vertices_3D = [_]f32{ -0.5, -0.5, -0.5, 0.0, 0.0, 0.5, -0.5, -0.5, 1.0, 0.0, 0.5, 0.5, -0.5, 1.0, 1.0, 0.5, 0.5, -0.5, 1.0, 1.0, -0.5, 0.5, -0.5, 0.0, 1.0, -0.5, -0.5, -0.5, 0.0, 0.0, -0.5, -0.5, 0.5, 0.0, 0.0, 0.5, -0.5, 0.5, 1.0, 0.0, 0.5, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, 0.5, 1.0, 1.0, -0.5, 0.5, 0.5, 0.0, 1.0, -0.5, -0.5, 0.5, 0.0, 0.0, -0.5, 0.5, 0.5, 1.0, 0.0, -0.5, 0.5, -0.5, 1.0, 1.0, -0.5, -0.5, -0.5, 0.0, 1.0, -0.5, -0.5, -0.5, 0.0, 1.0, -0.5, -0.5, 0.5, 0.0, 0.0, -0.5, 0.5, 0.5, 1.0, 0.0, 0.5, 0.5, 0.5, 1.0, 0.0, 0.5, 0.5, -0.5, 1.0, 1.0, 0.5, -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5, 1.0, 0.0, -0.5, -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, -0.5, 1.0, 1.0, 0.5, -0.5, 0.5, 1.0, 0.0, 0.5, -0.5, 0.5, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0, 0.0, -0.5, -0.5, -0.5, 0.0, 1.0, -0.5, 0.5, -0.5, 0.0, 1.0, 0.5, 0.5, -0.5, 1.0, 1.0, 0.5, 0.5, 0.5, 1.0, 0.0, 0.5, 0.5, 0.5, 1.0, 0.0, -0.5, 0.5, 0.5, 0.0, 0.0, -0.5, 0.5, -0.5, 0.0, 1.0 };
 
-        -0.5, -0.5,  0.5,  0.0, 0.0,
-         0.5, -0.5,  0.5,  1.0, 0.0,
-         0.5,  0.5,  0.5,  1.0, 1.0,
-         0.5,  0.5,  0.5,  1.0, 1.0,
-        -0.5,  0.5,  0.5,  0.0, 1.0,
-        -0.5, -0.5,  0.5,  0.0, 0.0,
-
-        -0.5,  0.5,  0.5,  1.0, 0.0,
-        -0.5,  0.5, -0.5,  1.0, 1.0,
-        -0.5, -0.5, -0.5,  0.0, 1.0,
-        -0.5, -0.5, -0.5,  0.0, 1.0,
-        -0.5, -0.5,  0.5,  0.0, 0.0,
-        -0.5,  0.5,  0.5,  1.0, 0.0,
-
-         0.5,  0.5,  0.5,  1.0, 0.0,
-         0.5,  0.5, -0.5,  1.0, 1.0,
-         0.5, -0.5, -0.5,  0.0, 1.0,
-         0.5, -0.5, -0.5,  0.0, 1.0,
-         0.5, -0.5,  0.5,  0.0, 0.0,
-         0.5,  0.5,  0.5,  1.0, 0.0,
-
-        -0.5, -0.5, -0.5,  0.0, 1.0,
-         0.5, -0.5, -0.5,  1.0, 1.0,
-         0.5, -0.5,  0.5,  1.0, 0.0,
-         0.5, -0.5,  0.5,  1.0, 0.0,
-        -0.5, -0.5,  0.5,  0.0, 0.0,
-        -0.5, -0.5, -0.5,  0.0, 1.0,
-
-        -0.5,  0.5, -0.5,  0.0, 1.0,
-         0.5,  0.5, -0.5,  1.0, 1.0,
-         0.5,  0.5,  0.5,  1.0, 0.0,
-         0.5,  0.5,  0.5,  1.0, 0.0,
-        -0.5,  0.5,  0.5,  0.0, 0.0,
-        -0.5,  0.5, -0.5,  0.0, 1.0
-    };
-
-    const cube_positions = [_][3]f32{
-        .{ 0.0,  0.0,  0.0}, 
-        .{ 2.0,  5.0, -15.0}, 
-        .{-1.5, -2.2, -2.5},  
-        .{-3.8, -2.0, -12.3},  
-        .{ 2.4, -0.4, -3.5},  
-        .{-1.7,  3.0, -7.5},  
-        .{ 1.3, -2.0, -2.5},  
-        .{ 1.5,  2.0, -2.5}, 
-        .{ 1.5,  0.2, -1.5}, 
-        .{-1.3,  1.0, -1.5} 
-    };
+    const cube_positions = [_][3]f32{ .{ 0.0, 0.0, 0.0 }, .{ 2.0, 5.0, -15.0 }, .{ -1.5, -2.2, -2.5 }, .{ -3.8, -2.0, -12.3 }, .{ 2.4, -0.4, -3.5 }, .{ -1.7, 3.0, -7.5 }, .{ 1.3, -2.0, -2.5 }, .{ 1.5, 2.0, -2.5 }, .{ 1.5, 0.2, -1.5 }, .{ -1.3, 1.0, -1.5 } };
 
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
@@ -206,13 +158,13 @@ pub fn main() !void {
     // Create the transformation matrices:
     // Degree to radians conversion factor
     const rad_conversion = math.pi / 180.0;
-    
+
     // Buffer to store Model matrix
     var model: [16]f32 = undefined;
-    
+
     // View matrix
     var view: [16]f32 = undefined;
-    
+
     // Buffer to store Orojection matrix (in render loop)
     var proj: [16]f32 = undefined;
 
@@ -227,10 +179,10 @@ pub fn main() !void {
         gl.bindTexture(gl.TEXTURE_2D, texture2);
         gl.bindVertexArray(VAO);
 
-        // Projection matrix 
-        const projM = x:  {
+        // Projection matrix
+        const projM = x: {
             var window_size = window.getSize();
-            var fov = @intToFloat(f32,window_size.width) / @intToFloat(f32,window_size.height);
+            var fov = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
             var projM = zm.perspectiveFovRhGl(45.0 * rad_conversion, fov, 0.1, 100.0);
             break :x projM;
         };
@@ -238,24 +190,21 @@ pub fn main() !void {
         shader_program.setMat4f("projection", proj);
 
         // View matrix: Camera
-        const radius: f32 = 10.0;
-        const camX: f32 = @floatCast(f32,@sin(glfw.getTime())) * radius;
-        const camZ: f32 = @floatCast(f32,@cos(glfw.getTime())) * radius;
-        const viewM = zm.lookAtRh(zm.loadArr3(.{camX, 0.0, camZ}), zm.loadArr3(.{0.0, 0.0, 0.0}), zm.loadArr3(.{0.0, 1.0, 0.0}));
+        const viewM = zm.lookAtRh(camera_pos, camera_pos + camera_front, camera_up);
         zm.storeMat(&view, viewM);
         shader_program.setMat4f("view", view);
-        
-        for (cube_positions) | cube_position, i | {
+
+        for (cube_positions) |cube_position, i| {
             // Model matrix
             const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
-            const rotation_direction = (((@mod(@intToFloat(f32,i + 1),2.0))*2.0)-1.0);
-            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32,glfw.getTime()) * 55.0 * rotation_direction * rad_conversion);
+            const rotation_direction = (((@mod(@intToFloat(f32, i + 1), 2.0)) * 2.0) - 1.0);
+            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32, glfw.getTime()) * 55.0 * rotation_direction * rad_conversion);
             const modelM = zm.mul(cube_rot, cube_trans);
             zm.storeMat(&model, modelM);
             shader_program.setMat4f("model", model);
-            
+
             gl.drawArrays(gl.TRIANGLES, 0, 36);
-        } 
+        }
 
         window.swapBuffers();
         glfw.pollEvents();
@@ -275,5 +224,17 @@ fn framebuffer_size_callback(window: glfw.Window, width: u32, height: u32) void 
 fn processInput(window: glfw.Window) void {
     if (glfw.Window.getKey(window, glfw.Key.escape) == glfw.Action.press) {
         _ = glfw.Window.setShouldClose(window, true);
+    }
+    if (glfw.Window.getKey(window, glfw.Key.w) == glfw.Action.press) {
+        camera_pos += camera_speed * camera_front;
+    }
+    if (glfw.Window.getKey(window, glfw.Key.s) == glfw.Action.press) {
+        camera_pos -= camera_speed * camera_front;
+    }
+    if (glfw.Window.getKey(window, glfw.Key.a) == glfw.Action.press) {
+        camera_pos -= zm.normalize3(zm.cross3(camera_front, camera_up)) * camera_speed;
+    }
+    if (glfw.Window.getKey(window, glfw.Key.d) == glfw.Action.press) {
+        camera_pos += zm.normalize3(zm.cross3(camera_front, camera_up)) * camera_speed;
     }
 }
