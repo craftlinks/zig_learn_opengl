@@ -8,14 +8,13 @@ const Shader = @import("Shader");
 const common = @import("common");
 
 
-
-
 // Camera
 var camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
 var camera_front = zm.loadArr3(.{ 0.0, 0.0, -1.0 });
 const camera_up = zm.loadArr3(.{ 0.0, 1.0, 0.0 });
 var yaw: f32 = -90.0;
 var pitch: f32 = 0.0;
+var fov: f32 = 45.0;
 
 // Timing
 var delta_time: f32 = 0.0;
@@ -176,6 +175,9 @@ pub fn main() !void {
     // mouse
     glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);
     glfw.Window.setCursorPosCallback(window, mouseCallback);
+    glfw.Window.setScrollCallback(window, mouseScrollCallback); 
+    var window_size = window.getSize();
+    const aspect = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
 
     while (!window.shouldClose()) {
         
@@ -196,9 +198,7 @@ pub fn main() !void {
 
         // Projection matrix
         const projM = x: {
-            var window_size = window.getSize();
-            var fov = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
-            var projM = zm.perspectiveFovRhGl(45.0 * common.RAD_CONVERSION, fov, 0.1, 100.0);
+            var projM = zm.perspectiveFovRhGl(fov * common.RAD_CONVERSION,  aspect, 0.1, 100.0);
             break :x projM;
         };
         zm.storeMat(&proj, projM);
@@ -220,7 +220,7 @@ pub fn main() !void {
 
             gl.drawArrays(gl.TRIANGLES, 0, 36);
         }
-
+        
         window.swapBuffers();
         glfw.pollEvents();
     }
@@ -279,12 +279,12 @@ fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
     lastX = xpos;
     lastY = ypos;
 
-    const sensitivity: f64 = 0.1;
+    const sensitivity: f64 = 0.05;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
     yaw += @floatCast(f32,xoffset);
-    pitch += @floatCast(f32,yoffset);
+    pitch -= @floatCast(f32,yoffset);
 
     if(pitch > 89.0)
         pitch =  89.0;
@@ -293,5 +293,17 @@ fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
 
     const direction = zm.loadArr3(.{@cos(yaw*common.RAD_CONVERSION) * @cos(pitch*common.RAD_CONVERSION), @sin(pitch*common.RAD_CONVERSION), @sin(yaw*common.RAD_CONVERSION) * @cos(pitch*common.RAD_CONVERSION)});
     camera_front = zm.normalize3(direction);
+
+}
+
+fn mouseScrollCallback(window: glfw.Window, xoffset: f64, yoffset: f64) void {
+    _ = window;
+    _ = xoffset;
+    
+    fov -= @floatCast(f32,yoffset);
+    if (fov < 1.0)
+        fov = 1.0;
+    if (fov > 45.0)
+        fov = 45.0; 
 
 }
