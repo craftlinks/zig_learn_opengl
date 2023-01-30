@@ -49,7 +49,7 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 
 - [**Simple camera**](src/getting_started/simple_camera/): First-person camera <br />
 `zig build simple_camera-run`
-    - WIP ...
+    - TODO: move camera logic to Camera struct
 
 ## **II. Lighting**
 ...

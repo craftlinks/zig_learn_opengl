@@ -15,6 +15,9 @@ const camera_up = zm.loadArr3(.{ 0.0, 1.0, 0.0 });
 var yaw: f32 = -90.0;
 var pitch: f32 = 0.0;
 var fov: f32 = 45.0;
+var lastX: f64 = 0.0;
+var lastY: f64 = 0.0;
+var first_mouse = true;
 
 // Timing
 var delta_time: f32 = 0.0;
@@ -49,6 +52,10 @@ pub fn main() !void {
 
     glfw.makeContextCurrent(window);
     glfw.Window.setFramebufferSizeCallback(window, framebuffer_size_callback);
+    // Capture mouse, disable cursor visibility
+    glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);
+    glfw.Window.setCursorPosCallback(window, mouseCallback);
+    glfw.Window.setScrollCallback(window, mouseScrollCallback); 
 
     // Load all OpenGL function pointers
     // ---------------------------------------
@@ -172,13 +179,6 @@ pub fn main() !void {
     // Buffer to store Orojection matrix (in render loop)
     var proj: [16]f32 = undefined;
 
-    // mouse
-    glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);
-    glfw.Window.setCursorPosCallback(window, mouseCallback);
-    glfw.Window.setScrollCallback(window, mouseScrollCallback); 
-    var window_size = window.getSize();
-    const aspect = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
-
     while (!window.shouldClose()) {
         
         // Time per frame
@@ -198,6 +198,8 @@ pub fn main() !void {
 
         // Projection matrix
         const projM = x: {
+            const window_size = window.getSize();
+            const aspect = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
             var projM = zm.perspectiveFovRhGl(fov * common.RAD_CONVERSION,  aspect, 0.1, 100.0);
             break :x projM;
         };
@@ -220,7 +222,7 @@ pub fn main() !void {
 
             gl.drawArrays(gl.TRIANGLES, 0, 36);
         }
-        
+
         window.swapBuffers();
         glfw.pollEvents();
     }
@@ -257,13 +259,8 @@ fn processInput(window: glfw.Window) void {
     }
 }
 
-var first_mouse = true;
-var lastX: f64= 0.0;
-var lastY: f64 = 0.0;
-
 fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
     
-
     _ = window;
     
     if (first_mouse)
