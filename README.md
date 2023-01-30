@@ -47,7 +47,7 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 - [**Camera rotation**](src/getting_started/camera_rotate/): Camera rotation around world origin <br />
 `zig build camera_rotate-run`
 
-- [**Simple camera**](src/getting_started/simple_camera/): First-person camera <br />
+- [**Simple camera**](src/getting_started/simple_camera/): Fly-like camera <br />
 `zig build simple_camera-run`
     - TODO: move camera logic to Camera struct
 
