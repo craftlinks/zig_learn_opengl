@@ -1,4 +1,5 @@
 const std = @import("std");
+const math = std.math;
 
 pub fn pathToContent(arena: std.mem.Allocator, resource_relative_path: [:0]const u8) ![4096:0] u8 {
     const exe_path = std.fs.selfExeDirPathAlloc(arena) catch unreachable;
@@ -9,3 +10,7 @@ pub fn pathToContent(arena: std.mem.Allocator, resource_relative_path: [:0]const
     content_path_zero[content_path.len] = 0; 
     return content_path_zero; 
 }
+
+// Create the transformation matrices:
+// Degree to radians conversion factor
+pub const RAD_CONVERSION = math.pi / 180.0;

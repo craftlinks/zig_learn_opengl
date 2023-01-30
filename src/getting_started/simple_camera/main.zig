@@ -7,10 +7,15 @@ const gl = @import("gl");
 const Shader = @import("Shader");
 const common = @import("common");
 
+
+
+
 // Camera
 var camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
-const camera_front = zm.loadArr3(.{ 0.0, 0.0, -1.0 });
+var camera_front = zm.loadArr3(.{ 0.0, 0.0, -1.0 });
 const camera_up = zm.loadArr3(.{ 0.0, 1.0, 0.0 });
+var yaw: f32 = -90.0;
+var pitch: f32 = 0.0;
 
 // Timing
 var delta_time: f32 = 0.0;
@@ -159,10 +164,6 @@ pub fn main() !void {
     shader_program.setInt("texture1", 0);
     shader_program.setInt("texture2", 1);
 
-    // Create the transformation matrices:
-    // Degree to radians conversion factor
-    const rad_conversion = math.pi / 180.0;
-
     // Buffer to store Model matrix
     var model: [16]f32 = undefined;
 
@@ -171,6 +172,10 @@ pub fn main() !void {
 
     // Buffer to store Orojection matrix (in render loop)
     var proj: [16]f32 = undefined;
+
+    // mouse
+    glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);
+    glfw.Window.setCursorPosCallback(window, mouseCallback);
 
     while (!window.shouldClose()) {
         
@@ -193,7 +198,7 @@ pub fn main() !void {
         const projM = x: {
             var window_size = window.getSize();
             var fov = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
-            var projM = zm.perspectiveFovRhGl(45.0 * rad_conversion, fov, 0.1, 100.0);
+            var projM = zm.perspectiveFovRhGl(45.0 * common.RAD_CONVERSION, fov, 0.1, 100.0);
             break :x projM;
         };
         zm.storeMat(&proj, projM);
@@ -208,7 +213,7 @@ pub fn main() !void {
             // Model matrix
             const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
             const rotation_direction = (((@mod(@intToFloat(f32, i + 1), 2.0)) * 2.0) - 1.0);
-            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32, glfw.getTime()) * 55.0 * rotation_direction * rad_conversion);
+            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32, glfw.getTime()) * 55.0 * rotation_direction * common.RAD_CONVERSION);
             const modelM = zm.mul(cube_rot, cube_trans);
             zm.storeMat(&model, modelM);
             shader_program.setMat4f("model", model);
@@ -250,4 +255,43 @@ fn processInput(window: glfw.Window) void {
     if (glfw.Window.getKey(window, glfw.Key.d) == glfw.Action.press) {
         camera_pos += zm.normalize3(zm.cross3(camera_front, camera_up)) * camera_speed;
     }
+}
+
+var first_mouse = true;
+var lastX: f64= 0.0;
+var lastY: f64 = 0.0;
+
+fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
+    
+
+    _ = window;
+    
+    if (first_mouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        first_mouse = false;
+    }
+    
+    var xoffset = xpos - lastX;
+    var yoffset = ypos - lastY;
+
+    lastX = xpos;
+    lastY = ypos;
+
+    const sensitivity: f64 = 0.1;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += @floatCast(f32,xoffset);
+    pitch += @floatCast(f32,yoffset);
+
+    if(pitch > 89.0)
+        pitch =  89.0;
+    if(pitch < -89.0)
+        pitch = -89.0;
+
+    const direction = zm.loadArr3(.{@cos(yaw*common.RAD_CONVERSION) * @cos(pitch*common.RAD_CONVERSION), @sin(pitch*common.RAD_CONVERSION), @sin(yaw*common.RAD_CONVERSION) * @cos(pitch*common.RAD_CONVERSION)});
+    camera_front = zm.normalize3(direction);
+
 }
