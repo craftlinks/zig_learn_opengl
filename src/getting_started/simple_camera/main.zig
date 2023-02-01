@@ -5,6 +5,7 @@ const zstbi = @import("zstbi");
 const zm = @import("zmath");
 const gl = @import("gl");
 const Shader = @import("Shader");
+const Camera = @import("Camera");
 const common = @import("common");
 
 

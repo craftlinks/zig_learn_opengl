@@ -19,6 +19,7 @@ fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime nam
     exe.addPackage(zmath.pkg);
     exe.addPackagePath("gl", "libs/gl.zig");
     exe.addPackagePath("Shader", "libs/Shader.zig");
+    exe.addPackagePath("Camera", "libs/Camera.zig");
     exe.addPackagePath("common", "libs/common.zig");
 
     try glfw.link(b, exe, .{});
