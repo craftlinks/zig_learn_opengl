@@ -8,17 +8,12 @@ const Shader = @import("Shader");
 const Camera = @import("Camera");
 const common = @import("common");
 
-
 // Camera
-var camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
-var camera_front = zm.loadArr3(.{ 0.0, 0.0, -1.0 });
-const camera_up = zm.loadArr3(.{ 0.0, 1.0, 0.0 });
-var yaw: f32 = -90.0;
-var pitch: f32 = 0.0;
-var fov: f32 = 45.0;
+const camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
 var lastX: f64 = 0.0;
 var lastY: f64 = 0.0;
 var first_mouse = true;
+var camera = Camera.camera(camera_pos); 
 
 // Timing
 var delta_time: f32 = 0.0;
@@ -201,14 +196,14 @@ pub fn main() !void {
         const projM = x: {
             const window_size = window.getSize();
             const aspect = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
-            var projM = zm.perspectiveFovRhGl(fov * common.RAD_CONVERSION,  aspect, 0.1, 100.0);
+            var projM = zm.perspectiveFovRhGl(camera.zoom * common.RAD_CONVERSION,  aspect, 0.1, 100.0);
             break :x projM;
         };
         zm.storeMat(&proj, projM);
         shader_program.setMat4f("projection", proj);
 
         // View matrix: Camera
-        const viewM = zm.lookAtRh(camera_pos, camera_pos + camera_front, camera_up);
+        const viewM = camera.getViewMatrix();
         zm.storeMat(&view, viewM);
         shader_program.setMat4f("view", view);
 
@@ -244,24 +239,21 @@ fn processInput(window: glfw.Window) void {
         _ = glfw.Window.setShouldClose(window, true);
     }
 
-    const camera_speed = zm.f32x4s(5 * delta_time);
-
     if (glfw.Window.getKey(window, glfw.Key.w) == glfw.Action.press) {
-        camera_pos += camera_speed * camera_front;
+        camera.processKeyboard(Camera.CameraMovement.FORWARD, delta_time);
     }
     if (glfw.Window.getKey(window, glfw.Key.s) == glfw.Action.press) {
-        camera_pos -= camera_speed * camera_front;
+        camera.processKeyboard(Camera.CameraMovement.BACKWARD, delta_time);
     }
     if (glfw.Window.getKey(window, glfw.Key.a) == glfw.Action.press) {
-        camera_pos -= zm.normalize3(zm.cross3(camera_front, camera_up)) * camera_speed;
+        camera.processKeyboard(Camera.CameraMovement.LEFT, delta_time);
     }
     if (glfw.Window.getKey(window, glfw.Key.d) == glfw.Action.press) {
-        camera_pos += zm.normalize3(zm.cross3(camera_front, camera_up)) * camera_speed;
+        camera.processKeyboard(Camera.CameraMovement.RIGHT, delta_time);
     }
 }
 
 fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
-    
     _ = window;
     
     if (first_mouse)
@@ -270,38 +262,19 @@ fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
         lastY = ypos;
         first_mouse = false;
     }
-    
+
     var xoffset = xpos - lastX;
     var yoffset = ypos - lastY;
 
     lastX = xpos;
     lastY = ypos;
 
-    const sensitivity: f64 = 0.05;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += @floatCast(f32,xoffset);
-    pitch -= @floatCast(f32,yoffset);
-
-    if(pitch > 89.0)
-        pitch =  89.0;
-    if(pitch < -89.0)
-        pitch = -89.0;
-
-    const direction = zm.loadArr3(.{@cos(yaw*common.RAD_CONVERSION) * @cos(pitch*common.RAD_CONVERSION), @sin(pitch*common.RAD_CONVERSION), @sin(yaw*common.RAD_CONVERSION) * @cos(pitch*common.RAD_CONVERSION)});
-    camera_front = zm.normalize3(direction);
-
+    camera.processMouseMovement(xoffset, yoffset, true);
 }
 
 fn mouseScrollCallback(window: glfw.Window, xoffset: f64, yoffset: f64) void {
     _ = window;
     _ = xoffset;
     
-    fov -= @floatCast(f32,yoffset);
-    if (fov < 1.0)
-        fov = 1.0;
-    if (fov > 45.0)
-        fov = 45.0; 
-
+    camera.processMouseScroll(yoffset);
 }
