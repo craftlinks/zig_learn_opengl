@@ -49,7 +49,6 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 
 - [**Simple camera**](src/getting_started/simple_camera/): Fly-like camera <br />
 `zig build simple_camera-run`
-    - TODO: move camera logic to Camera struct
 
 ## **II. Lighting**
 ...
