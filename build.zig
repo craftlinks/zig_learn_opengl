@@ -8,6 +8,29 @@ pub const Options = struct {
     target: std.zig.CrossTarget,
 };
 
+const pkgs = struct {
+    const gl = std.build.Pkg{
+        .name = "gl",
+        .source = .{.path = "libs/gl.zig"},
+        .dependencies = &[_]std.build.Pkg{},
+    };
+    const shader = std.build.Pkg{
+        .name = "Shader",
+        .source = .{.path = "libs/Shader.zig"},
+        .dependencies = &[_]std.build.Pkg{gl},
+    };
+        const common = std.build.Pkg{
+        .name = "common",
+        .source = .{.path = "libs/common.zig"},
+        .dependencies = &[_]std.build.Pkg{},
+    };
+    const camera = std.build.Pkg{
+        .name = "Camera",
+        .source = .{.path = "libs/Camera.zig"},
+        .dependencies = &[_]std.build.Pkg{gl, shader, zmath.pkg, common},
+    };
+};
+
 
 fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime name: []const u8) !void{
     exe.want_lto = false;
@@ -17,10 +40,10 @@ fn installExe(b: *std.build.Builder, exe: *std.build.LibExeObjStep, comptime nam
     exe.addPackage(glfw.pkg);
     exe.addPackage(zstbi.pkg);
     exe.addPackage(zmath.pkg);
-    exe.addPackagePath("gl", "libs/gl.zig");
-    exe.addPackagePath("Shader", "libs/Shader.zig");
-    exe.addPackagePath("Camera", "libs/Camera.zig");
-    exe.addPackagePath("common", "libs/common.zig");
+    exe.addPackage(pkgs.gl);
+    exe.addPackage(pkgs.shader);
+    exe.addPackage(pkgs.common);
+    exe.addPackage(pkgs.camera);
 
     try glfw.link(b, exe, .{});
     zstbi.link(exe);

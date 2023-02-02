@@ -1,7 +1,7 @@
 const std = @import("std");
-const gl = @import("./gl.zig");
-const zm = @import("./zmath/src/zmath.zig");
-const common = @import("./common.zig");
+const gl = @import("gl");
+const zm = @import("zmath");
+const common = @import("common");
 const Camera = @This();
 
 pub const CameraMovement = enum {

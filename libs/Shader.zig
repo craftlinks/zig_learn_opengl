@@ -1,5 +1,5 @@
 const std = @import("std");
-const gl = @import("./gl.zig");
+const gl = @import("gl");
 const Shader = @This();
 
 // The program ID
