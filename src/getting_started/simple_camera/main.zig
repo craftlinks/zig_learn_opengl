@@ -28,25 +28,21 @@ pub fn main() !void {
 
     // glfw: initialize and configure
     // ------------------------------
-    if (!glfw.init(.{})) {
-        std.log.err("GLFW initialization failed", .{});
+    glfw.init() catch {
+        std.log.err("Failed to initialize GLFW library.", .{});
         return;
-    }
+    };
     defer glfw.terminate();
 
     // glfw window creation
     // --------------------
-    const window = glfw.Window.create(WindowSize.width, WindowSize.height, "mach-glfw + zig-opengl", null, null, .{
-        .opengl_profile = .opengl_core_profile,
-        .context_version_major = 4,
-        .context_version_minor = 1,
-    }) orelse {
-        std.log.err("GLFW Window creation failed", .{});
+    const window = glfw.Window.create(WindowSize.width, WindowSize.height, "mach-glfw + zig-opengl", null) catch {
+        std.log.err("Failed to create demo window.", .{});
         return;
     };
     defer window.destroy();
 
-    glfw.makeContextCurrent(window);
+    // glfw.makeContextCurrent(window);
     glfw.Window.setFramebufferSizeCallback(window, framebuffer_size_callback);
     // Capture mouse, disable cursor visibility
     glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);

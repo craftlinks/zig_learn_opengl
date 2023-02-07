@@ -17,9 +17,11 @@ Then in your `build.zig` add:
 ```zig
 const zstbi = @import("libs/zstbi/build.zig");
 
-pub fn build(b: *std.build.Builder) void {
+pub fn build(b: *std.Build) void {
     ...
-    exe.addPackage(zstbi.pkg);
+    const zstbi_pkg = zstbi.package(b, .{});
+
+    exe.addModule("zstbi", zstbi_pkg.module);
 
     zstbi.link(exe);
 }
