@@ -1,7 +1,4 @@
 const std = @import("std");
-const glfw = @import("libs/mach-glfw/build.zig");
-const zstbi = @import("libs/zstbi/build.zig");
-const zmath = @import("libs/zmath/build.zig");
 
 pub const Options = struct {
     build_mode: std.builtin.Mode,

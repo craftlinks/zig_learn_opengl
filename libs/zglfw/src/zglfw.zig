@@ -90,13 +90,17 @@ pub const InputMode = enum(i32) {
     raw_mouse_motion = 0x00033005,
 };
 
-pub const makeContextCurrent = glfwMakeContextCurrent;
-
+pub fn makeContextCurrent(window: *Window) void {
+    glfwMakeContextCurrent(window);
+}
 extern fn glfwMakeContextCurrent(window: *Window) callconv(.C) void;
 
-pub const GLProc = *const fn () callconv(.C) void;
+pub const GLProc = *const fn() callconv(.C) void;
 
-pub const getProcAddress = glfwGetProcAddress;
+pub fn getProcAddress(proc_name: [*:0]const u8) callconv(.C) ?GLProc {
+    if (glfwGetProcAddress(proc_name)) |proc_address| return proc_address;
+    return null;
+}
 
 extern fn glfwGetProcAddress(proc_name: [*:0]const u8) callconv(.C) ?GLProc;
 
