@@ -27,7 +27,7 @@ pub fn build(b: *std.Build, options: Options) *std.build.CompileStep {
     const shader = b.createModule(
         .{
             .source_file = .{.path = "libs/Shader.zig"},
-            .dependencies = &.{}
+            .dependencies = &.{.{.name = "gl", .module = gl}}
         }
     );
     const common = b.createModule(

@@ -40,6 +40,7 @@ pub fn link(exe: *std.Build.CompileStep) void {
             exe.linkSystemLibraryName("gdi32");
             exe.linkSystemLibraryName("user32");
             exe.linkSystemLibraryName("shell32");
+            exe.linkSystemLibraryName("opengl32");
             exe.addCSourceFiles(&.{
                 src_dir ++ "monitor.c",
                 src_dir ++ "init.c",

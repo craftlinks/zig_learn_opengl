@@ -13,7 +13,7 @@ const camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
 var lastX: f64 = 0.0;
 var lastY: f64 = 0.0;
 var first_mouse = true;
-var camera = Camera.camera(camera_pos); 
+var camera = Camera.camera(camera_pos);
 
 // Timing
 var delta_time: f32 = 0.0;
@@ -42,12 +42,12 @@ pub fn main() !void {
     };
     defer window.destroy();
 
-    // glfw.makeContextCurrent(window);
+    glfw.makeContextCurrent(window);
     glfw.Window.setFramebufferSizeCallback(window, framebuffer_size_callback);
     // Capture mouse, disable cursor visibility
-    glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);
+    glfw.Window.setInputMode(window, glfw.InputMode.cursor, glfw.Cursor.Mode.disabled);
     glfw.Window.setCursorPosCallback(window, mouseCallback);
-    glfw.Window.setScrollCallback(window, mouseScrollCallback); 
+    glfw.Window.setScrollCallback(window, mouseScrollCallback);
 
     // Load all OpenGL function pointers
     // ---------------------------------------
@@ -172,7 +172,7 @@ pub fn main() !void {
     var proj: [16]f32 = undefined;
 
     while (!window.shouldClose()) {
-        
+
         // Time per frame
         const current_frame = @floatCast(f32, glfw.getTime());
         delta_time = current_frame - last_frame;
@@ -191,8 +191,8 @@ pub fn main() !void {
         // Projection matrix
         const projM = x: {
             const window_size = window.getSize();
-            const aspect = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
-            var projM = zm.perspectiveFovRhGl(camera.zoom * common.RAD_CONVERSION,  aspect, 0.1, 100.0);
+            const aspect = @intToFloat(f32, window_size[0]) / @intToFloat(f32, window_size[1]);
+            var projM = zm.perspectiveFovRhGl(camera.zoom * common.RAD_CONVERSION, aspect, 0.1, 100.0);
             break :x projM;
         };
         zm.storeMat(&proj, projM);
@@ -225,12 +225,12 @@ fn glGetProcAddress(p: glfw.GLProc, proc: [:0]const u8) ?gl.FunctionPointer {
     return glfw.getProcAddress(proc);
 }
 
-fn framebuffer_size_callback(window: glfw.Window, width: u32, height: u32) void {
+fn framebuffer_size_callback(window: *glfw.Window, width: i32, height: i32) callconv(.C) void {
     _ = window;
     gl.viewport(0, 0, @intCast(c_int, width), @intCast(c_int, height));
 }
 
-fn processInput(window: glfw.Window) void {
+fn processInput(window: *glfw.Window) void {
     if (glfw.Window.getKey(window, glfw.Key.escape) == glfw.Action.press) {
         _ = glfw.Window.setShouldClose(window, true);
     }
@@ -249,11 +249,10 @@ fn processInput(window: glfw.Window) void {
     }
 }
 
-fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
+fn mouseCallback(window: *glfw.Window, xpos: f64, ypos: f64) callconv(.C) void {
     _ = window;
-    
-    if (first_mouse)
-    {
+
+    if (first_mouse) {
         lastX = xpos;
         lastY = ypos;
         first_mouse = false;
@@ -268,9 +267,9 @@ fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
     camera.processMouseMovement(xoffset, yoffset, true);
 }
 
-fn mouseScrollCallback(window: glfw.Window, xoffset: f64, yoffset: f64) void {
+fn mouseScrollCallback(window: *glfw.Window, xoffset: f64, yoffset: f64) callconv(.C) void {
     _ = window;
     _ = xoffset;
-    
+
     camera.processMouseScroll(yoffset);
 }

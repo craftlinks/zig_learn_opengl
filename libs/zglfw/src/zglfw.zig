@@ -89,6 +89,17 @@ pub const InputMode = enum(i32) {
     lock_key_mods = 0x00033004,
     raw_mouse_motion = 0x00033005,
 };
+
+pub const makeContextCurrent = glfwMakeContextCurrent;
+
+extern fn glfwMakeContextCurrent(window: *Window) callconv(.C) void;
+
+pub const GLProc = *const fn () callconv(.C) void;
+
+pub const getProcAddress = glfwGetProcAddress;
+
+extern fn glfwGetProcAddress(proc_name: [*:0]const u8) callconv(.C) ?GLProc;
+
 //--------------------------------------------------------------------------------------------------
 //
 // Keyboard/Mouse
@@ -471,6 +482,11 @@ pub const Window = opaque {
     }
     extern fn glfwWindowShouldClose(window: *Window) i32;
 
+    pub fn setShouldClose(window: *Window, value: bool) void {
+        glfwSetWindowShouldClose(window, @boolToInt(value));
+    }
+    extern fn glfwSetWindowShouldClose(window: *Window, i32) void;
+
     /// `pub fn destroy(window: *Window) void`
     pub const destroy = glfwDestroyWindow;
     extern fn glfwDestroyWindow(window: *Window) void;
@@ -510,6 +526,22 @@ pub const Window = opaque {
         return .{ width, height };
     }
     extern fn glfwGetFramebufferSize(window: *Window, width: *i32, height: *i32) void;
+
+    pub const setFramebufferSizeCallback = glfwSetFramebufferSizeCallback;
+
+    extern fn glfwSetFramebufferSizeCallback(
+        window: *Window,
+        callback: ?*const fn (
+            window: *Window,
+            width: i32,
+            height: i32,
+        ) callconv(.C) void,
+    ) callconv(.C) void;
+
+    pub inline fn swapBuffers(window: *Window) void {
+        glfwSwapBuffers(window);
+    }
+    extern fn glfwSwapBuffers(window: *Window) void ;
 
     pub fn getSize(window: *Window) [2]i32 {
         var width: i32 = 0.0;
