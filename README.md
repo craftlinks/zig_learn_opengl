@@ -51,4 +51,7 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 `zig build simple_camera-run`
 
 ## **II. Lighting**
-...
+
+### Basic Lighting
+- WIP... [**Basic Lighting**](src/getting_started/basic_lighting/): Phong lighting model <br />
+`zig build basic_lighting-run`
