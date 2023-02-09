@@ -49,13 +49,14 @@ pub fn build(b: *std.Build) !void {
 
     const zmath_module = zmath.package(b, .{}).module;
     const zstbi_module = zstbi.package(b, .{}).module;
+    const glfw_module = glfw.package(b).module;
 
     const gl_module = b.createModule(.{.source_file = .{.path="libs/gl.zig"}, .dependencies = &.{}});
     const shader_module = b.createModule(.{.source_file = .{.path="libs/Shader.zig"}, .dependencies = &.{.{.name = "gl", .module = gl_module}}});
     const common_module = b.createModule(.{.source_file = .{.path="libs/common.zig"}, .dependencies = &.{}});
     const camera_module = b.createModule(.{.source_file = .{.path="libs/Camera.zig"}, .dependencies = &.{.{.name = "gl", .module = gl_module}, .{.name = "Shader", .module = shader_module}, .{.name = "zmath", .module = zmath_module}, .{.name = "common", .module = common_module}}});
 
-    const exe_dependencies: []const ExeDependency = &.{.{.name = "zmath", .module = zmath_module}, .{.name = "zstbi", .module = zstbi_module}, .{.name="gl", .module=gl_module}, .{.name="Shader", .module=shader_module}, .{.name="common", .module=common_module}, .{.name="Camera", .module=camera_module}};
+    const exe_dependencies: []const ExeDependency = &.{.{.name = "zmath", .module = zmath_module}, .{.name = "zstbi", .module = zstbi_module}, .{.name="gl", .module=gl_module},.{.name="glfw", .module=glfw_module}, .{.name="Shader", .module=shader_module}, .{.name="common", .module=common_module}, .{.name="Camera", .module=camera_module}};
     // const hello_triangle = @import("src/getting_started/hello_triangle/build.zig");
     // const hello_rectangle = @import("src/getting_started/hello_rectangle/build.zig");
     // const shaders = @import("src/getting_started/shaders/build.zig");
