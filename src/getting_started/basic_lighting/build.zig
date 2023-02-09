@@ -11,7 +11,7 @@ const content_dir = "content/";
 pub fn build(b: *std.build.Builder, options: Options) *std.build.CompileStep {
     const exe = b.addExecutable(
         .{
-            .name = "colors",
+            .name = "basic_lighting",
             .root_source_file = .{
                 .path = thisDir() ++ "/main.zig"
             },

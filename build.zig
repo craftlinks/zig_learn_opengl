@@ -53,7 +53,7 @@ pub fn build(b: *std.Build) !void {
     const coordinate_systems = @import("src/getting_started/coordinate_systems/build.zig");
     const camera_rotate = @import("src/getting_started/camera_rotate/build.zig");
     const simple_camera = @import("src/getting_started/simple_camera/build.zig");
-    const colors = @import("src/getting_started/colors/build.zig");
+    const basic_lighting = @import("src/getting_started/basic_lighting/build.zig");
 
     try installExe(b, hello_triangle.build(b, options), "hello_triangle", exe_dependencies);
     try installExe(b, hello_rectangle.build(b, options), "hello_rectangle", exe_dependencies);
@@ -63,7 +63,7 @@ pub fn build(b: *std.Build) !void {
     try installExe(b, coordinate_systems.build(b, options), "coordinate_systems", exe_dependencies);
     try installExe(b, camera_rotate.build(b, options), "camera_rotate", exe_dependencies);
     try installExe(b, simple_camera.build(b, options), "simple_camera", exe_dependencies);
-    try installExe(b, colors.build(b, options), "colors", exe_dependencies);
+    try installExe(b, basic_lighting.build(b, options), "basic_lighting", exe_dependencies);
 }
 
 pub const Options = struct {
