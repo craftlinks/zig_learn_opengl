@@ -1,0 +1,4 @@
+[submodule "libs/mach-glfw"]
+	path = libs/mach-glfw
+	url = https://github.com/craftlinks/mach-glfw.git
+	branch = main
