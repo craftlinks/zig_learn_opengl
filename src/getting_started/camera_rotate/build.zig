@@ -8,8 +8,15 @@ inline fn thisDir() []const u8 {
 
 const content_dir = "content/";
 
-pub fn build(b: *std.build.Builder, options: Options) *std.build.LibExeObjStep {
-    const exe = b.addExecutable("camera_rotate", thisDir() ++ "/main.zig");
+pub fn build(b: *std.Build, options: Options) *std.build.CompileStep {
+    const exe = b.addExecutable(.{
+            .name = "camera_rotate",
+            .root_source_file = .{
+                .path = thisDir() ++ "/main.zig"
+            },
+            .target = options.target,
+            .optimize = options.build_mode
+        } );
 
     const install_content_step = b.addInstallDirectory(.{
         .source_dir = thisDir() ++ "/" ++ content_dir,
@@ -17,9 +24,6 @@ pub fn build(b: *std.build.Builder, options: Options) *std.build.LibExeObjStep {
         .install_subdir = "bin/" ++ content_dir,
     });
     exe.step.dependOn(&install_content_step.step);
-
-    exe.setBuildMode(options.build_mode);
-    exe.setTarget(options.target);
 
     return exe;
 }

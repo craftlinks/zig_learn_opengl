@@ -8,7 +8,7 @@ inline fn thisDir() []const u8 {
 
 const content_dir = "content/";
 
-pub fn build(b: *std.build.Builder, options: Options) *std.build.LibExeObjStep {
+pub fn build(b: *std.build.Builder, options: Options) *std.build.CompileStep {
     const exe = b.addExecutable(
         .{
             .name = "simple_camera",
