@@ -22,9 +22,11 @@ Then in your `build.zig` add:
 const std = @import("std");
 const zmath = @import("libs/zmath/build.zig");
 
-pub fn build(b: *std.build.Builder) void {
+pub fn build(b: *std.Build) void {
     ...
-    exe.addPackage(zmath.pkg);
+    const zmath_pkg = zmath.package(b, .{});
+
+    exe.addModule("zmath", zmath_pkg.module);
 }
 ```
 

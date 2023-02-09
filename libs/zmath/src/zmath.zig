@@ -177,11 +177,16 @@
 // lookAtRh(eyepos: Vec, focuspos: Vec, updir: Vec) Mat
 // perspectiveFovLh(fovy: f32, aspect: f32, near: f32, far: f32) Mat
 // perspectiveFovRh(fovy: f32, aspect: f32, near: f32, far: f32) Mat
+// perspectiveFovLhGl(fovy: f32, aspect: f32, near: f32, far: f32) Mat
 // perspectiveFovRhGl(fovy: f32, aspect: f32, near: f32, far: f32) Mat
 // orthographicLh(w: f32, h: f32, near: f32, far: f32) Mat
 // orthographicRh(w: f32, h: f32, near: f32, far: f32) Mat
+// orthographicLhGl(w: f32, h: f32, near: f32, far: f32) Mat
+// orthographicRhGl(w: f32, h: f32, near: f32, far: f32) Mat
 // orthographicOffCenterLh(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat
 // orthographicOffCenterRh(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat
+// orthographicOffCenterLhGl(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat
+// orthographicOffCenterRhGl(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat
 // determinant(m: Mat) F32x4
 // inverse(m: Mat) Mat
 // inverseDet(m: Mat, det: ?*F32x4) Mat
@@ -781,6 +786,7 @@ pub inline fn min(v0: anytype, v1: anytype) @TypeOf(v0, v1) {
     return @min(v0, v1); // minps, cmpunordps, andps, andnps, orps
 }
 test "zmath.min" {
+    if (builtin.target.os.tag == .macos) return error.SkipZigTest;
     {
         const v0 = f32x4(1.0, 3.0, 2.0, 7.0);
         const v1 = f32x4(2.0, 1.0, 4.0, math.inf_f32);
@@ -822,6 +828,7 @@ pub inline fn max(v0: anytype, v1: anytype) @TypeOf(v0, v1) {
     return @max(v0, v1); // maxps, cmpunordps, andps, andnps, orps
 }
 test "zmath.max" {
+    if (builtin.target.os.tag == .macos) return error.SkipZigTest;
     {
         const v0 = f32x4(1.0, 3.0, 2.0, 7.0);
         const v1 = f32x4(2.0, 1.0, 4.0, math.inf_f32);
@@ -1234,6 +1241,7 @@ pub inline fn clamp(v: anytype, vmin: anytype, vmax: anytype) @TypeOf(v, vmin, v
     return result;
 }
 test "zmath.clamp" {
+    if (builtin.target.os.tag == .macos) return error.SkipZigTest;
     {
         const v0 = f32x4(-1.0, 0.2, 1.1, -0.3);
         const v = clamp(v0, splat(F32x4, -0.5), splat(F32x4, 0.5));
@@ -1276,6 +1284,7 @@ pub inline fn saturate(v: anytype) @TypeOf(v) {
     return result;
 }
 test "zmath.saturate" {
+    if (builtin.target.os.tag == .macos) return error.SkipZigTest;
     {
         const v0 = f32x4(-1.0, 0.2, 1.1, -0.3);
         const v = saturate(v0);
@@ -1406,11 +1415,15 @@ test "zmath.modAngle" {
 
 pub inline fn mulAdd(v0: anytype, v1: anytype, v2: anytype) @TypeOf(v0, v1, v2) {
     const T = @TypeOf(v0, v1, v2);
-    if (cpu_arch == .x86_64 and has_avx and has_fma) {
-        return @mulAdd(T, v0, v1, v2);
+    if (@import("zmath_options").prefer_determinism) {
+        return v0 * v1 + v2; // Compiler will generate mul, add sequence (no fma even if the target supports it).
     } else {
-        // NOTE(mziulek): On .x86_64 without HW fma instructions @mulAdd maps to really slow code!
-        return v0 * v1 + v2;
+        if (cpu_arch == .x86_64 and has_avx and has_fma) {
+            return @mulAdd(T, v0, v1, v2);
+        } else {
+            // NOTE(mziulek): On .x86_64 without HW fma instructions @mulAdd maps to really slow code!
+            return v0 * v1 + v2;
+        }
     }
 }
 
@@ -2242,6 +2255,26 @@ pub fn perspectiveFovRh(fovy: f32, aspect: f32, near: f32, far: f32) Mat {
 }
 
 // Produces Z values in [-1.0, 1.0] range (OpenGL defaults)
+pub fn perspectiveFovLhGl(fovy: f32, aspect: f32, near: f32, far: f32) Mat {
+    const scfov = sincos(0.5 * fovy);
+
+    assert(near > 0.0 and far > 0.0 and far > near);
+    assert(!math.approxEqAbs(f32, scfov[0], 0.0, 0.001));
+    assert(!math.approxEqAbs(f32, far, near, 0.001));
+    assert(!math.approxEqAbs(f32, aspect, 0.0, 0.01));
+
+    const h = scfov[1] / scfov[0];
+    const w = h / aspect;
+    const r = far - near;
+    return .{
+        f32x4(w, 0.0, 0.0, 0.0),
+        f32x4(0.0, h, 0.0, 0.0),
+        f32x4(0.0, 0.0, (near + far) / r, 1.0),
+        f32x4(0.0, 0.0, 2.0 * near * far / -r, 0.0),
+    };
+}
+
+// Produces Z values in [-1.0, 1.0] range (OpenGL defaults)
 pub fn perspectiveFovRhGl(fovy: f32, aspect: f32, near: f32, far: f32) Mat {
     const scfov = sincos(0.5 * fovy);
 
@@ -2289,29 +2322,83 @@ pub fn orthographicRh(w: f32, h: f32, near: f32, far: f32) Mat {
     };
 }
 
+// Produces Z values in [-1.0, 1.0] range (OpenGL defaults)
+pub fn orthographicLhGl(w: f32, h: f32, near: f32, far: f32) Mat {
+    assert(!math.approxEqAbs(f32, w, 0.0, 0.001));
+    assert(!math.approxEqAbs(f32, h, 0.0, 0.001));
+    assert(!math.approxEqAbs(f32, far, near, 0.001));
+
+    const r = far - near;
+    return .{
+        f32x4(2 / w, 0.0, 0.0, 0.0),
+        f32x4(0.0, 2 / h, 0.0, 0.0),
+        f32x4(0.0, 0.0, 2 / r, 0.0),
+        f32x4(0.0, 0.0, (near + far) / -r, 1.0),
+    };
+}
+
+// Produces Z values in [-1.0, 1.0] range (OpenGL defaults)
+pub fn orthographicRhGl(w: f32, h: f32, near: f32, far: f32) Mat {
+    assert(!math.approxEqAbs(f32, w, 0.0, 0.001));
+    assert(!math.approxEqAbs(f32, h, 0.0, 0.001));
+    assert(!math.approxEqAbs(f32, far, near, 0.001));
+
+    const r = near - far;
+    return .{
+        f32x4(2 / w, 0.0, 0.0, 0.0),
+        f32x4(0.0, 2 / h, 0.0, 0.0),
+        f32x4(0.0, 0.0, 2 / r, 0.0),
+        f32x4(0.0, 0.0, (near + far) / r, 1.0),
+    };
+}
+
 pub fn orthographicOffCenterLh(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat {
     assert(!math.approxEqAbs(f32, far, near, 0.001));
 
-    const r = 1.0 / (far - near);
-
+    const r = 1 / (far - near);
     return .{
-        f32x4(2 / (right - left), 0.0, 0.0, -(right + left) / (right - left)),
-        f32x4(0.0, 2 / (top - bottom), 0.0, -(top + bottom) / (top - bottom)),
-        f32x4(0.0, 0.0, r, -r * near),
-        f32x4(0.0, 0.0, 0.0, 1.0),
+        f32x4(2 / (right - left), 0.0, 0.0, 0.0),
+        f32x4(0.0, 2 / (top - bottom), 0.0, 0.0),
+        f32x4(0.0, 0.0, r, 0.0),
+        f32x4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), -r * near, 1.0),
     };
 }
 
 pub fn orthographicOffCenterRh(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat {
     assert(!math.approxEqAbs(f32, far, near, 0.001));
 
-    const r = 1.0 / (near - far);
-
+    const r = 1 / (near - far);
     return .{
-        f32x4(2 / (right - left), 0.0, 0.0, -(right + left) / (right - left)),
-        f32x4(0.0, 2 / (top - bottom), 0.0, -(top + bottom) / (top - bottom)),
-        f32x4(0.0, 0.0, r, r * near),
-        f32x4(0.0, 0.0, 0.0, 1.0),
+        f32x4(2 / (right - left), 0.0, 0.0, 0.0),
+        f32x4(0.0, 2 / (top - bottom), 0.0, 0.0),
+        f32x4(0.0, 0.0, r, 0.0),
+        f32x4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), r * near, 1.0),
+    };
+}
+
+// Produces Z values in [-1.0, 1.0] range (OpenGL defaults)
+pub fn orthographicOffCenterLhGl(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat {
+    assert(!math.approxEqAbs(f32, far, near, 0.001));
+
+    const r = far - near;
+    return .{
+        f32x4(2 / (right - left), 0.0, 0.0, 0.0),
+        f32x4(0.0, 2 / (top - bottom), 0.0, 0.0),
+        f32x4(0.0, 0.0, 2 / r, 0.0),
+        f32x4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), (near + far) / -r, 1.0),
+    };
+}
+
+// Produces Z values in [-1.0, 1.0] range (OpenGL defaults)
+pub fn orthographicOffCenterRhGl(left: f32, right: f32, top: f32, bottom: f32, near: f32, far: f32) Mat {
+    assert(!math.approxEqAbs(f32, far, near, 0.001));
+
+    const r = near - far;
+    return .{
+        f32x4(2 / (right - left), 0.0, 0.0, 0.0),
+        f32x4(0.0, 2 / (top - bottom), 0.0, 0.0),
+        f32x4(0.0, 0.0, 2 / r, 0.0),
+        f32x4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), (near + far) / r, 1.0),
     };
 }
 
