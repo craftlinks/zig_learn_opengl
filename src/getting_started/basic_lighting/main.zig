@@ -167,10 +167,6 @@ pub fn main() !void {
     gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
 
-    shader_program.use();
-    shader_program.setVec3f("objectColor", .{1.0, 0.5, 0.31});
-    shader_program.setVec3f("lightColor", .{1.0, 1.0, 1.0});
-
     // Buffer to store Model matrix
     var model: [16]f32 = undefined;
 
@@ -193,8 +189,11 @@ pub fn main() !void {
 
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.bindVertexArray(VAO);
-
+        shader_program.use();
+        shader_program.setVec3f("objectColor", .{1.0, 0.5, 0.31});
+        shader_program.setVec3f("lightColor", .{1.0, 1.0, 1.0});
+        shader_program.setVec3f("lightPos", light_position); 
+        
         // Projection matrix
         const projM = x: {
             const window_size = window.getSize();
@@ -210,7 +209,19 @@ pub fn main() !void {
         zm.storeMat(&view, viewM);
         shader_program.setMat4f("view", view);
 
-        shader_program.setVec3f("lightPos", light_position); 
+
+        for (cube_positions) |cube_position, i| {
+            // Model matrix
+            const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
+            const rotation_direction = (((@mod(@intToFloat(f32, i + 1), 2.0)) * 2.0) - 1.0);
+            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32, glfw.getTime()) * 55.0 * rotation_direction * common.RAD_CONVERSION);
+            const modelM = zm.mul(cube_rot, cube_trans);
+            zm.storeMat(&model, modelM);
+            shader_program.setMat4f("model", model);
+
+            gl.bindVertexArray(VAO); 
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+        }
 
         const light_trans = zm.translation(light_position[0], light_position[1], light_position[2]);
         const light_modelM = zm.mul(light_trans,zm.scaling(0.2, 0.2, 0.2));
@@ -222,21 +233,6 @@ pub fn main() !void {
         light_shader.setMat4f("model", light_model); 
         gl.bindVertexArray(light_VAO);
         gl.drawArrays(gl.TRIANGLES, 0, 36);
-
-        shader_program.use();
-        gl.bindVertexArray(VAO); 
-
-        for (cube_positions) |cube_position, i| {
-            // Model matrix
-            const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
-            const rotation_direction = (((@mod(@intToFloat(f32, i + 1), 2.0)) * 2.0) - 1.0);
-            const cube_rot = zm.matFromAxisAngle(zm.f32x4(1.0, 0.3, 0.5, 1.0), @floatCast(f32, glfw.getTime()) * 55.0 * rotation_direction * common.RAD_CONVERSION);
-            const modelM = zm.mul(cube_rot, cube_trans);
-            zm.storeMat(&model, modelM);
-            shader_program.setMat4f("model", model);
-
-            gl.drawArrays(gl.TRIANGLES, 0, 36);
-        }
 
         window.swapBuffers();
         glfw.pollEvents();
