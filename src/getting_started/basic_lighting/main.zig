@@ -20,7 +20,7 @@ var delta_time: f32 = 0.0;
 var last_frame: f32 = 0.0;
 
 // lighting
-const light_position = [_]f32{ 5.0, 1.0, -2.0 };
+const light_position = [_]f32{ 10.0, 1.0, 2.0 };
 
 const WindowSize = struct {
     pub const width: u32 = 800;
