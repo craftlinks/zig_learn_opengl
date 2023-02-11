@@ -87,7 +87,49 @@ pub fn main() !void {
 
     _ = vertices_2D;
 
-    const vertices_3D = [_]f32{ -0.5, -0.5, -0.5, 0.0, 0.0, 0.5, -0.5, -0.5, 1.0, 0.0, 0.5, 0.5, -0.5, 1.0, 1.0, 0.5, 0.5, -0.5, 1.0, 1.0, -0.5, 0.5, -0.5, 0.0, 1.0, -0.5, -0.5, -0.5, 0.0, 0.0, -0.5, -0.5, 0.5, 0.0, 0.0, 0.5, -0.5, 0.5, 1.0, 0.0, 0.5, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, 0.5, 1.0, 1.0, -0.5, 0.5, 0.5, 0.0, 1.0, -0.5, -0.5, 0.5, 0.0, 0.0, -0.5, 0.5, 0.5, 1.0, 0.0, -0.5, 0.5, -0.5, 1.0, 1.0, -0.5, -0.5, -0.5, 0.0, 1.0, -0.5, -0.5, -0.5, 0.0, 1.0, -0.5, -0.5, 0.5, 0.0, 0.0, -0.5, 0.5, 0.5, 1.0, 0.0, 0.5, 0.5, 0.5, 1.0, 0.0, 0.5, 0.5, -0.5, 1.0, 1.0, 0.5, -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0.5, 1.0, 0.0, -0.5, -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, -0.5, 1.0, 1.0, 0.5, -0.5, 0.5, 1.0, 0.0, 0.5, -0.5, 0.5, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0, 0.0, -0.5, -0.5, -0.5, 0.0, 1.0, -0.5, 0.5, -0.5, 0.0, 1.0, 0.5, 0.5, -0.5, 1.0, 1.0, 0.5, 0.5, 0.5, 1.0, 0.0, 0.5, 0.5, 0.5, 1.0, 0.0, -0.5, 0.5, 0.5, 0.0, 0.0, -0.5, 0.5, -0.5, 0.0, 1.0 };
+    const vertices_3D = [_]f32{ 
+        -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
+         0.5, -0.5, -0.5,  0.0,  0.0, -1.0, 
+         0.5,  0.5, -0.5,  0.0,  0.0, -1.0, 
+         0.5,  0.5, -0.5,  0.0,  0.0, -1.0, 
+        -0.5,  0.5, -0.5,  0.0,  0.0, -1.0, 
+        -0.5, -0.5, -0.5,  0.0,  0.0, -1.0, 
+
+        -0.5, -0.5,  0.5,  0.0,  0.0, 1.0,
+         0.5, -0.5,  0.5,  0.0,  0.0, 1.0,
+         0.5,  0.5,  0.5,  0.0,  0.0, 1.0,
+         0.5,  0.5,  0.5,  0.0,  0.0, 1.0,
+        -0.5,  0.5,  0.5,  0.0,  0.0, 1.0,
+        -0.5, -0.5,  0.5,  0.0,  0.0, 1.0,
+
+        -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
+        -0.5,  0.5, -0.5, -1.0,  0.0,  0.0,
+        -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
+        -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
+        -0.5, -0.5,  0.5, -1.0,  0.0,  0.0,
+        -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
+
+        0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
+        0.5,  0.5, -0.5,  1.0,  0.0,  0.0,
+        0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
+        0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
+        0.5, -0.5,  0.5,  1.0,  0.0,  0.0,
+        0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
+
+        -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+         0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+         0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+         0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+        -0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+        -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+
+        -0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
+         0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
+         0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+         0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+        -0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+        -0.5,  0.5, -0.5,  0.0,  1.0,  0.0
+     };
 
     const cube_positions = [_][3]f32{ .{ 0.0, 0.0, 0.0 }, .{ 2.0, 5.0, -15.0 }, .{ -1.5, -2.2, -2.5 }, .{ -3.8, -2.0, -12.3 }, .{ 2.4, -0.4, -3.5 }, .{ -1.7, 3.0, -7.5 }, .{ 1.3, -2.0, -2.5 }, .{ 1.5, 2.0, -2.5 }, .{ 1.5, 0.2, -1.5 }, .{ -1.3, 1.0, -1.5 } };
     
@@ -111,74 +153,21 @@ pub fn main() !void {
     gl.bufferData(gl.ARRAY_BUFFER, @sizeOf(f32) * vertices_3D.len, &vertices_3D, gl.STATIC_DRAW);
 
     // vertex
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 5 * @sizeOf(f32), null);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
+
+    // normal attribute
+    const normal_offset: [*c]c_uint = (3 * @sizeOf(f32));
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), normal_offset);
+    gl.enableVertexAttribArray(1);
     
     // Configure light VAO
     gl.bindVertexArray(light_VAO);
     gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 5 * @sizeOf(f32), null);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), null);
     gl.enableVertexAttribArray(0);
 
-    // texture coords
-    const tex_offset: [*c]c_uint = (3 * @sizeOf(f32));
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 5 * @sizeOf(f32), tex_offset);
-    gl.enableVertexAttribArray(1);
-
-    // zstbi: loading an image.
-    zstbi.init(allocator);
-    defer zstbi.deinit();
-
-    const image1_path = common.pathToContent(arena, "content\\container.jpg") catch unreachable;
-    var image1 = try zstbi.Image.init(&image1_path, 0);
-    defer image1.deinit();
-    std.debug.print("\nImage 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{ image1.width, image1.height, image1.num_components });
-
-    zstbi.setFlipVerticallyOnLoad(true);
-    const image2_path = common.pathToContent(arena, "content\\awesomeface.png") catch unreachable;
-    var image2 = try zstbi.Image.init(&image2_path, 0);
-    defer image2.deinit();
-    std.debug.print("\nImage 2 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{ image2.width, image2.height, image2.num_components });
-
-    // Create and bind texture1 resource
-    var texture1: c_uint = undefined;
-
-    gl.genTextures(1, &texture1);
-    gl.activeTexture(gl.TEXTURE0); // activate the texture unit first before binding texture
-    gl.bindTexture(gl.TEXTURE_2D, texture1);
-
-    // set the texture1 wrapping parameters
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-    // set texture1 filtering parameters
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-    // Generate the texture1
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int, image1.width), @intCast(c_int, image1.height), 0, gl.RGB, gl.UNSIGNED_BYTE, @ptrCast([*c]const u8, image1.data));
-    gl.generateMipmap(gl.TEXTURE_2D);
-
-    // Texture2
-    var texture2: c_uint = undefined;
-
-    gl.genTextures(1, &texture2);
-    gl.activeTexture(gl.TEXTURE1); // activate the texture unit first before binding texture
-    gl.bindTexture(gl.TEXTURE_2D, texture2);
-
-    // set the texture1 wrapping parameters
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-    // set texture1 filtering parameters
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-    // Generate the texture1
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int, image2.width), @intCast(c_int, image2.height), 0, gl.RGBA, gl.UNSIGNED_BYTE, @ptrCast([*c]const u8, image2.data));
-    gl.generateMipmap(gl.TEXTURE_2D);
-
     shader_program.use();
-    // shader_program.setInt("texture1", 0);
-    // shader_program.setInt("texture2", 1);
     shader_program.setVec3f("objectColor", .{1.0, 0.5, 0.31});
     shader_program.setVec3f("lightColor", .{1.0, 1.0, 1.0});
 
@@ -204,10 +193,6 @@ pub fn main() !void {
 
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture1);
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, texture2);
         gl.bindVertexArray(VAO);
 
         // Projection matrix
@@ -225,6 +210,8 @@ pub fn main() !void {
         zm.storeMat(&view, viewM);
         shader_program.setMat4f("view", view);
 
+        shader_program.setVec3f("lightPos", light_position); 
+
         const light_trans = zm.translation(light_position[0], light_position[1], light_position[2]);
         const light_modelM = zm.mul(light_trans,zm.scaling(0.2, 0.2, 0.2));
         zm.storeMat(&light_model, light_modelM);
@@ -232,7 +219,7 @@ pub fn main() !void {
         light_shader.use();
         light_shader.setMat4f("projection", proj);
         light_shader.setMat4f("view", view);
-        light_shader.setMat4f("model", light_model);
+        light_shader.setMat4f("model", light_model); 
         gl.bindVertexArray(light_VAO);
         gl.drawArrays(gl.TRIANGLES, 0, 36);
 
