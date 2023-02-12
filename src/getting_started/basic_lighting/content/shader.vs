@@ -11,7 +11,7 @@ out vec3 Normal;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0f);
-    FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = mat3(transpose(inverse(model))) * aNormal;
+    gl_Position = projection * view * vec4(aPos, 1.0f);
+    FragPos = vec3(vec4(aPos, 1.0));
+    Normal =  aNormal;
 }
