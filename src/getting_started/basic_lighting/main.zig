@@ -192,7 +192,8 @@ pub fn main() !void {
         shader_program.use();
         shader_program.setVec3f("objectColor", .{1.0, 0.5, 0.31});
         shader_program.setVec3f("lightColor", .{1.0, 1.0, 1.0});
-        shader_program.setVec3f("lightPos", light_position); 
+        shader_program.setVec3f("lightPos", light_position);
+        shader_program.setVec3f("viewPos", zm.vecToArr3(camera.position)); 
         
         // Projection matrix
         const projM = x: {
