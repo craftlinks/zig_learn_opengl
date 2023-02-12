@@ -36,7 +36,7 @@ pub fn build(b: *std.Build) !void {
     // Modules
     const zmath_module = zmath.package(b, .{}).module;
     const zstbi_module = zstbi.package(b, .{}).module;
-    const glfw_module = glfw.package(b).module;
+    const glfw_module = glfw.module(b);
     const gl_module = b.createModule(.{.source_file = .{.path="libs/gl.zig"}, .dependencies = &.{}});
     const shader_module = b.createModule(.{.source_file = .{.path="libs/Shader.zig"}, .dependencies = &.{.{.name = "gl", .module = gl_module}}});
     const common_module = b.createModule(.{.source_file = .{.path="libs/common.zig"}, .dependencies = &.{}});
