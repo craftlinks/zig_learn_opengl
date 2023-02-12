@@ -53,5 +53,6 @@ Zig Language installation [How-to instructions](https://ziglang.org/learn/gettin
 ## **II. Lighting**
 
 ### Basic Lighting
-- WIP... [**Basic Lighting**](src/getting_started/basic_lighting/): Phong lighting model <br />
+- [**Basic Lighting**](src/getting_started/basic_lighting/): Phong lighting model <br />
 `zig build basic_lighting-run`
+<br /><a href="src/getting_started/basic_lighting"><img src="src/getting_started/basic_lighting/image.png" alt="basic_lighting" height="200"></a>
