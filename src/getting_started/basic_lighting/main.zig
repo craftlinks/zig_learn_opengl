@@ -20,7 +20,7 @@ var delta_time: f32 = 0.0;
 var last_frame: f32 = 0.0;
 
 // lighting
-const light_position = [_]f32{ 10.0, 1.0, 2.0 };
+var light_position = [_]f32{ 10.0, 1.0, 2.0 };
 
 const WindowSize = struct {
     pub const width: u32 = 800;
@@ -189,6 +189,10 @@ pub fn main() !void {
 
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        light_position[0] = 10.0 + zm.sin(@floatCast(f32, glfw.getTime())) * 2.0;
+        light_position[1] = zm.sin(@floatCast(f32, glfw.getTime()) / 2.0) * 1.0;
+
         shader_program.use();
         shader_program.setVec3f("objectColor", .{1.0, 0.5, 0.31});
         shader_program.setVec3f("lightColor", .{1.0, 1.0, 1.0});
