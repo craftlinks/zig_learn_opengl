@@ -9,16 +9,12 @@ inline fn thisDir() []const u8 {
 const content_dir = "content/";
 
 pub fn build(b: *std.build.Builder, options: Options) *std.build.CompileStep {
-    const exe = b.addExecutable(
-        .{
-            .name = "simple_camera",
-            .root_source_file = .{
-                .path = thisDir() ++ "/main.zig"
-            },
-            .target = options.target,
-            .optimize = options.build_mode
-        } 
-    );
+    const exe = b.addExecutable(.{
+        .name = "simple_camera",
+        .root_source_file = .{ .path = thisDir() ++ "/main.zig" },
+        .target = options.target,
+        .optimize = options.build_mode,
+    });
 
     const install_content_step = b.addInstallDirectory(.{
         .source_dir = thisDir() ++ "/" ++ content_dir,

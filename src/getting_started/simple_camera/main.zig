@@ -13,7 +13,7 @@ const camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
 var lastX: f64 = 0.0;
 var lastY: f64 = 0.0;
 var first_mouse = true;
-var camera = Camera.camera(camera_pos); 
+var camera = Camera.camera(camera_pos);
 
 // Timing
 var delta_time: f32 = 0.0;
@@ -51,7 +51,7 @@ pub fn main() !void {
     // Capture mouse, disable cursor visibility
     glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);
     glfw.Window.setCursorPosCallback(window, mouseCallback);
-    glfw.Window.setScrollCallback(window, mouseScrollCallback); 
+    glfw.Window.setScrollCallback(window, mouseScrollCallback);
 
     // Load all OpenGL function pointers
     // ---------------------------------------
@@ -65,7 +65,7 @@ pub fn main() !void {
     const arena = arena_allocator_state.allocator();
 
     // create shader program
-    var shader_program: Shader = Shader.create(arena, "content\\shader.vs", "content\\shader.fs");
+    var shader_program: Shader = Shader.create(arena, "content/shader.vs", "content/shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -112,13 +112,13 @@ pub fn main() !void {
     zstbi.init(allocator);
     defer zstbi.deinit();
 
-    const image1_path = common.pathToContent(arena, "content\\container.jpg") catch unreachable;
+    const image1_path = common.pathToContent(arena, "content/container.jpg") catch unreachable;
     var image1 = try zstbi.Image.init(&image1_path, 0);
     defer image1.deinit();
     std.debug.print("\nImage 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{ image1.width, image1.height, image1.num_components });
 
     zstbi.setFlipVerticallyOnLoad(true);
-    const image2_path = common.pathToContent(arena, "content\\awesomeface.png") catch unreachable;
+    const image2_path = common.pathToContent(arena, "content/awesomeface.png") catch unreachable;
     var image2 = try zstbi.Image.init(&image2_path, 0);
     defer image2.deinit();
     std.debug.print("\nImage 2 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{ image2.width, image2.height, image2.num_components });
@@ -176,7 +176,7 @@ pub fn main() !void {
     var proj: [16]f32 = undefined;
 
     while (!window.shouldClose()) {
-        
+
         // Time per frame
         const current_frame = @floatCast(f32, glfw.getTime());
         delta_time = current_frame - last_frame;
@@ -196,7 +196,7 @@ pub fn main() !void {
         const projM = x: {
             const window_size = window.getSize();
             const aspect = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
-            var projM = zm.perspectiveFovRhGl(camera.zoom * common.RAD_CONVERSION,  aspect, 0.1, 100.0);
+            var projM = zm.perspectiveFovRhGl(camera.zoom * common.RAD_CONVERSION, aspect, 0.1, 100.0);
             break :x projM;
         };
         zm.storeMat(&proj, projM);
@@ -207,7 +207,7 @@ pub fn main() !void {
         zm.storeMat(&view, viewM);
         shader_program.setMat4f("view", view);
 
-        for (cube_positions) |cube_position, i| {
+        for (cube_positions, 0..) |cube_position, i| {
             // Model matrix
             const cube_trans = zm.translation(cube_position[0], cube_position[1], cube_position[2]);
             const rotation_direction = (((@mod(@intToFloat(f32, i + 1), 2.0)) * 2.0) - 1.0);
@@ -255,9 +255,8 @@ fn processInput(window: glfw.Window) void {
 
 fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
     _ = window;
-    
-    if (first_mouse)
-    {
+
+    if (first_mouse) {
         lastX = xpos;
         lastY = ypos;
         first_mouse = false;
@@ -275,6 +274,6 @@ fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
 fn mouseScrollCallback(window: glfw.Window, xoffset: f64, yoffset: f64) void {
     _ = window;
     _ = xoffset;
-    
+
     camera.processMouseScroll(yoffset);
 }
