@@ -113,7 +113,7 @@ pub fn main() !void {
         0.5, 0.5, 0.0, // top right
         0.5, -0.5, 0.0, // bottom right
         -0.5, -0.5, 0.0, // bottom left
-        -0.5, 0.5,  0.0, // top left
+        -0.5, 0.5, 0.0, // top left
     };
 
     const indices = [6]c_uint{

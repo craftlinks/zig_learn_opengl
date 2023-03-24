@@ -92,7 +92,7 @@ pub fn main() !void {
     // create a program object
     var shaderProgram: c_uint = undefined;
     shaderProgram = gl.createProgram();
-    std.debug.print("{any}",.{shaderProgram});
+    std.debug.print("{any}", .{shaderProgram});
     defer gl.deleteProgram(shaderProgram);
 
     // attach compiled shader objects to the program object and link
@@ -133,14 +133,13 @@ pub fn main() !void {
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-   
 
     while (!window.shouldClose()) {
         processInput(window);
 
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        
+
         // Activate shaderProgram
         gl.useProgram(shaderProgram);
         gl.bindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized

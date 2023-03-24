@@ -8,15 +8,11 @@ inline fn thisDir() []const u8 {
 
 pub fn build(b: *std.Build, options: Options) *std.build.CompileStep {
     const exe = b.addExecutable(.{
-            .name = "hello_trangle",
-            .root_source_file = .{
-                .path = thisDir() ++ "/main.zig"
-            },
-            .target = options.target,
-            .optimize = options.build_mode
-        } );
+        .name = "hello_trangle",
+        .root_source_file = .{ .path = thisDir() ++ "/main.zig" },
+        .target = options.target,
+        .optimize = options.build_mode,
+    });
 
     return exe;
-
 }
-

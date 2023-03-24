@@ -47,17 +47,21 @@ pub fn main() !void {
     const arena = arena_allocator_state.allocator();
 
     // create shader program
-    var shader_program: Shader = Shader.create(arena, "content\\shader.vs", "content\\shader.fs");
+    var shader_program: Shader = Shader.create(
+        arena,
+        "content/shader.vs",
+        "content/shader.fs",
+    );
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
     const vertices = [_]f32{
         // positions      // colors        // texture coords
-         0.5,  0.5, 0.0,   1.0, 0.0, 0.0,   1.0, 1.0,   // top right
-         0.5, -0.5, 0.0,   0.0, 1.0, 0.0,   1.0, 0.0,   // bottom right
-        -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0,   // bottom left
-        -0.5,  0.5, 0.0,   1.0, 1.0, 0.0,   0.0, 1.0    // top left 
+        0.5, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, // top right
+        0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, // bottom right
+        -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, // bottom left
+        -0.5, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
     };
 
     const indices = [_]c_uint{
@@ -102,21 +106,26 @@ pub fn main() !void {
     gl.vertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, 8 * @sizeOf(f32), tex_offset);
     gl.enableVertexAttribArray(2);
 
-
     // zstbi: loading an image.
     zstbi.init(allocator);
     defer zstbi.deinit();
 
-    const image1_path = common.pathToContent(arena, "content\\container.jpg") catch unreachable;
+    const image1_path = common.pathToContent(arena, "content/container.jpg") catch unreachable;
     var image1 = try zstbi.Image.init(&image1_path, 0);
     defer image1.deinit();
-    std.debug.print("\nImage 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{image1.width, image1.height, image1.num_components});
+    std.debug.print(
+        "\nImage 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n",
+        .{ image1.width, image1.height, image1.num_components },
+    );
 
     zstbi.setFlipVerticallyOnLoad(true);
-    const image2_path = common.pathToContent(arena, "content\\awesomeface.png") catch unreachable;
+    const image2_path = common.pathToContent(arena, "content/awesomeface.png") catch unreachable;
     var image2 = try zstbi.Image.init(&image2_path, 0);
     defer image2.deinit();
-    std.debug.print("\nImage 2 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{image2.width, image2.height, image2.num_components});
+    std.debug.print(
+        "\nImage 2 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n",
+        .{ image2.width, image2.height, image2.num_components },
+    );
 
     // Create and bind texture1 resource
     var texture1: c_uint = undefined;
@@ -126,14 +135,14 @@ pub fn main() !void {
     gl.bindTexture(gl.TEXTURE_2D, texture1);
 
     // set the texture1 wrapping parameters
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     // set texture1 filtering parameters
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
     // Generate the texture1
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int,image1.width), @intCast(c_int,image1.height), 0, gl.RGB, gl.UNSIGNED_BYTE, @ptrCast([*c] const u8, image1.data));
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int, image1.width), @intCast(c_int, image1.height), 0, gl.RGB, gl.UNSIGNED_BYTE, @ptrCast([*c]const u8, image1.data));
     gl.generateMipmap(gl.TEXTURE_2D);
 
     // Texture2
@@ -144,17 +153,15 @@ pub fn main() !void {
     gl.bindTexture(gl.TEXTURE_2D, texture2);
 
     // set the texture1 wrapping parameters
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     // set texture1 filtering parameters
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
     // Generate the texture1
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int,image2.width), @intCast(c_int,image2.height), 0, gl.RGBA, gl.UNSIGNED_BYTE, @ptrCast([*c] const u8, image2.data));
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, @intCast(c_int, image2.width), @intCast(c_int, image2.height), 0, gl.RGBA, gl.UNSIGNED_BYTE, @ptrCast([*c]const u8, image2.data));
     gl.generateMipmap(gl.TEXTURE_2D);
-
-
 
     shader_program.use();
     shader_program.setInt("texture1", 0);

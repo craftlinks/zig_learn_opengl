@@ -13,7 +13,7 @@ const camera_pos = zm.loadArr3(.{ 0.0, 0.0, 5.0 });
 var lastX: f64 = 0.0;
 var lastY: f64 = 0.0;
 var first_mouse = true;
-var camera = Camera.camera(camera_pos); 
+var camera = Camera.camera(camera_pos);
 
 // Timing
 var delta_time: f32 = 0.0;
@@ -54,7 +54,7 @@ pub fn main() !void {
     // Capture mouse, disable cursor visibility
     glfw.Window.setInputMode(window, glfw.Window.InputMode.cursor, glfw.Window.InputModeCursor.disabled);
     glfw.Window.setCursorPosCallback(window, mouseCallback);
-    glfw.Window.setScrollCallback(window, mouseScrollCallback); 
+    glfw.Window.setScrollCallback(window, mouseScrollCallback);
 
     // Load all OpenGL function pointers
     // ---------------------------------------
@@ -71,8 +71,8 @@ pub fn main() !void {
     gl.enable(gl.DEPTH_TEST);
 
     // create shader program
-    var shader_program: Shader = Shader.create(arena, "content\\shader.vs", "content\\shader.fs");
-    var light_shader: Shader = Shader.create(arena, "content\\light_shader.vs", "content\\light_shader.fs");
+    var shader_program: Shader = Shader.create(arena, "content/shader.vs", "content/shader.fs");
+    var light_shader: Shader = Shader.create(arena, "content/light_shader.vs", "content/light_shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -87,50 +87,50 @@ pub fn main() !void {
 
     _ = vertices_2D;
 
-    const vertices_3D = [_]f32{ 
-        -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
-         0.5, -0.5, -0.5,  0.0,  0.0, -1.0, 
-         0.5,  0.5, -0.5,  0.0,  0.0, -1.0, 
-         0.5,  0.5, -0.5,  0.0,  0.0, -1.0, 
-        -0.5,  0.5, -0.5,  0.0,  0.0, -1.0, 
-        -0.5, -0.5, -0.5,  0.0,  0.0, -1.0, 
+    const vertices_3D = [_]f32{
+        -0.5, -0.5, -0.5, 0.0,  0.0,  -1.0,
+        0.5,  -0.5, -0.5, 0.0,  0.0,  -1.0,
+        0.5,  0.5,  -0.5, 0.0,  0.0,  -1.0,
+        0.5,  0.5,  -0.5, 0.0,  0.0,  -1.0,
+        -0.5, 0.5,  -0.5, 0.0,  0.0,  -1.0,
+        -0.5, -0.5, -0.5, 0.0,  0.0,  -1.0,
 
-        -0.5, -0.5,  0.5,  0.0,  0.0, 1.0,
-         0.5, -0.5,  0.5,  0.0,  0.0, 1.0,
-         0.5,  0.5,  0.5,  0.0,  0.0, 1.0,
-         0.5,  0.5,  0.5,  0.0,  0.0, 1.0,
-        -0.5,  0.5,  0.5,  0.0,  0.0, 1.0,
-        -0.5, -0.5,  0.5,  0.0,  0.0, 1.0,
+        -0.5, -0.5, 0.5,  0.0,  0.0,  1.0,
+        0.5,  -0.5, 0.5,  0.0,  0.0,  1.0,
+        0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+        0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+        -0.5, 0.5,  0.5,  0.0,  0.0,  1.0,
+        -0.5, -0.5, 0.5,  0.0,  0.0,  1.0,
 
-        -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
-        -0.5,  0.5, -0.5, -1.0,  0.0,  0.0,
-        -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
-        -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
-        -0.5, -0.5,  0.5, -1.0,  0.0,  0.0,
-        -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
+        -0.5, 0.5,  0.5,  -1.0, 0.0,  0.0,
+        -0.5, 0.5,  -0.5, -1.0, 0.0,  0.0,
+        -0.5, -0.5, -0.5, -1.0, 0.0,  0.0,
+        -0.5, -0.5, -0.5, -1.0, 0.0,  0.0,
+        -0.5, -0.5, 0.5,  -1.0, 0.0,  0.0,
+        -0.5, 0.5,  0.5,  -1.0, 0.0,  0.0,
 
         0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
-        0.5,  0.5, -0.5,  1.0,  0.0,  0.0,
-        0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
-        0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
-        0.5, -0.5,  0.5,  1.0,  0.0,  0.0,
+        0.5,  0.5,  -0.5, 1.0,  0.0,  0.0,
+        0.5,  -0.5, -0.5, 1.0,  0.0,  0.0,
+        0.5,  -0.5, -0.5, 1.0,  0.0,  0.0,
+        0.5,  -0.5, 0.5,  1.0,  0.0,  0.0,
         0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
 
-        -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
-         0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
-         0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
-         0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
-        -0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
-        -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+        -0.5, -0.5, -0.5, 0.0,  -1.0, 0.0,
+        0.5,  -0.5, -0.5, 0.0,  -1.0, 0.0,
+        0.5,  -0.5, 0.5,  0.0,  -1.0, 0.0,
+        0.5,  -0.5, 0.5,  0.0,  -1.0, 0.0,
+        -0.5, -0.5, 0.5,  0.0,  -1.0, 0.0,
+        -0.5, -0.5, -0.5, 0.0,  -1.0, 0.0,
 
-        -0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
-         0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
-         0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
-         0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
-        -0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
-        -0.5,  0.5, -0.5,  0.0,  1.0,  0.0
-     };
-    
+        -0.5, 0.5,  -0.5, 0.0,  1.0,  0.0,
+        0.5,  0.5,  -0.5, 0.0,  1.0,  0.0,
+        0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+        0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+        -0.5, 0.5,  0.5,  0.0,  1.0,  0.0,
+        -0.5, 0.5,  -0.5, 0.0,  1.0,  0.0,
+    };
+
     var VBO: c_uint = undefined;
     var VAO: c_uint = undefined;
     var light_VAO: c_uint = undefined;
@@ -158,7 +158,7 @@ pub fn main() !void {
     const normal_offset: [*c]c_uint = (3 * @sizeOf(f32));
     gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 6 * @sizeOf(f32), normal_offset);
     gl.enableVertexAttribArray(1);
-    
+
     // Configure light VAO
     gl.bindVertexArray(light_VAO);
     gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
@@ -174,7 +174,7 @@ pub fn main() !void {
     var light_model: [16]f32 = undefined;
 
     while (!window.shouldClose()) {
-        
+
         // Time per frame
         const current_frame = @floatCast(f32, glfw.getTime());
         delta_time = current_frame - last_frame;
@@ -189,16 +189,16 @@ pub fn main() !void {
         light_position[1] = 1.0 + zm.sin(@floatCast(f32, glfw.getTime()) / 2.0) * 1.0;
 
         shader_program.use();
-        shader_program.setVec3f("objectColor", .{1.0, 0.5, 0.31});
-        shader_program.setVec3f("lightColor", .{1.0, 1.0, 1.0});
+        shader_program.setVec3f("objectColor", .{ 1.0, 0.5, 0.31 });
+        shader_program.setVec3f("lightColor", .{ 1.0, 1.0, 1.0 });
         shader_program.setVec3f("lightPos", light_position);
-        shader_program.setVec3f("viewPos", zm.vecToArr3(camera.position)); 
-        
+        shader_program.setVec3f("viewPos", zm.vecToArr3(camera.position));
+
         // Projection matrix
         const projM = x: {
             const window_size = window.getSize();
             const aspect = @intToFloat(f32, window_size.width) / @intToFloat(f32, window_size.height);
-            var projM = zm.perspectiveFovRhGl(camera.zoom * common.RAD_CONVERSION,  aspect, 0.1, 100.0);
+            var projM = zm.perspectiveFovRhGl(camera.zoom * common.RAD_CONVERSION, aspect, 0.1, 100.0);
             break :x projM;
         };
         zm.storeMat(&proj, projM);
@@ -209,17 +209,17 @@ pub fn main() !void {
         zm.storeMat(&view, viewM);
         shader_program.setMat4f("view", view);
 
-        gl.bindVertexArray(VAO); 
+        gl.bindVertexArray(VAO);
         gl.drawArrays(gl.TRIANGLES, 0, 36);
 
         const light_trans = zm.translation(light_position[0], light_position[1], light_position[2]);
-        const light_modelM = zm.mul(light_trans,zm.scaling(0.2, 0.2, 0.2));
+        const light_modelM = zm.mul(light_trans, zm.scaling(0.2, 0.2, 0.2));
         zm.storeMat(&light_model, light_modelM);
 
         light_shader.use();
         light_shader.setMat4f("projection", proj);
         light_shader.setMat4f("view", view);
-        light_shader.setMat4f("model", light_model); 
+        light_shader.setMat4f("model", light_model);
         gl.bindVertexArray(light_VAO);
         gl.drawArrays(gl.TRIANGLES, 0, 36);
 
@@ -259,9 +259,8 @@ fn processInput(window: glfw.Window) void {
 
 fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
     _ = window;
-    
-    if (first_mouse)
-    {
+
+    if (first_mouse) {
         lastX = xpos;
         lastY = ypos;
         first_mouse = false;
@@ -279,6 +278,6 @@ fn mouseCallback(window: glfw.Window, xpos: f64, ypos: f64) void {
 fn mouseScrollCallback(window: glfw.Window, xoffset: f64, yoffset: f64) void {
     _ = window;
     _ = xoffset;
-    
+
     camera.processMouseScroll(yoffset);
 }

@@ -10,13 +10,11 @@ const content_dir = "shaders/";
 
 pub fn build(b: *std.Build, options: Options) *std.build.CompileStep {
     const exe = b.addExecutable(.{
-            .name = "shaders",
-            .root_source_file = .{
-                .path = thisDir() ++ "/main.zig"
-            },
-            .target = options.target,
-            .optimize = options.build_mode
-        } );
+        .name = "shaders",
+        .root_source_file = .{ .path = thisDir() ++ "/main.zig" },
+        .target = options.target,
+        .optimize = options.build_mode,
+    });
 
     const install_content_step = b.addInstallDirectory(.{
         .source_dir = thisDir() ++ "/" ++ content_dir,

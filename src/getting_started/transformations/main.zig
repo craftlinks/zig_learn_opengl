@@ -49,7 +49,7 @@ pub fn main() !void {
     const arena = arena_allocator_state.allocator();
 
     // create shader program
-    var shader_program: Shader = Shader.create(arena, "content\\shader.vs", "content\\shader.fs");
+    var shader_program: Shader = Shader.create(arena, "content/shader.vs", "content/shader.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -108,13 +108,13 @@ pub fn main() !void {
     zstbi.init(allocator);
     defer zstbi.deinit();
 
-    const image1_path = common.pathToContent(arena, "content\\container.jpg") catch unreachable;
+    const image1_path = common.pathToContent(arena, "content/container.jpg") catch unreachable;
     var image1 = try zstbi.Image.init(&image1_path, 0);
     defer image1.deinit();
     std.debug.print("\nImage 1 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{ image1.width, image1.height, image1.num_components });
 
     zstbi.setFlipVerticallyOnLoad(true);
-    const image2_path = common.pathToContent(arena, "content\\awesomeface.png") catch unreachable;
+    const image2_path = common.pathToContent(arena, "content/awesomeface.png") catch unreachable;
     var image2 = try zstbi.Image.init(&image2_path, 0);
     defer image2.deinit();
     std.debug.print("\nImage 2 info:\n\n  img width: {any}\n  img height: {any}\n  nchannels: {any}\n", .{ image2.width, image2.height, image2.num_components });
@@ -171,7 +171,7 @@ pub fn main() !void {
         gl.bindVertexArray(VAO);
 
         // Construction of the tranformation matrix
-        const rotZ = zm.rotationZ(@floatCast(f32,glfw.getTime()));
+        const rotZ = zm.rotationZ(@floatCast(f32, glfw.getTime()));
         const scale = zm.scaling(0.5, 0.5, 0.5);
         const transformM = zm.mul(rotZ, scale);
         var transform: [16]f32 = undefined;
